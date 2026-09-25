@@ -1,0 +1,1670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESL Morpho Quest - Word Forms & Morphology</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts: Lora (Classic Literary Serif) & Plus Jakarta Sans (Crisp Modern UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Lora', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            parchment: {
+              base: '#f4eee1',       /* Warm vellum antique page background */
+              card: '#faf6ee',       /* Elevated aged parchment card */
+              cardAlt: '#ede4d3',    /* Deeper vintage parchment tint */
+              border: '#dfd3c0',     /* Muted sepia paper border */
+              borderDark: '#c4b59d', /* Darkened deckle edge border */
+              ink: '#292119',        /* Deep espresso / carbon ink text */
+              inkMuted: '#6e5d4f',   /* Aged faded ink for secondary labels */
+              accent: '#b45309',     /* Warm amber sealing wax */
+              terracotta: '#9a3412', /* Terracotta rust */
+              gold: '#d97706',       /* Antique gold */
+            },
+            nightparchment: {
+              base: '#171513',       /* Deep charcoal midnight base */
+              card: '#221e1a',       /* Smoked leather dark card */
+              cardAlt: '#2c2722',    /* Elevated panel */
+              border: '#3d352b',     /* Darkened bronze border */
+              ink: '#ece4d8',        /* Antique ivory ink */
+              inkMuted: '#9e9282',   /* Muted ivory secondary text */
+              accent: '#d97706',     /* Glowing lantern amber */
+            }
+          },
+          animation: {
+            'pop': 'pop 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            'shake': 'shake 0.4s ease-in-out',
+            'warm-glow': 'warmGlow 1.8s infinite alternate ease-in-out',
+          },
+          keyframes: {
+            pop: {
+              '0%': { transform: 'scale(0.92)', opacity: '0.6' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            },
+            shake: {
+              '0%, 100%': { transform: 'translateX(0)' },
+              '20%, 60%': { transform: 'translateX(-6px)' },
+              '40%, 80%': { transform: 'translateX(6px)' }
+            },
+            warmGlow: {
+              '0%': { boxShadow: '0 0 4px rgba(180, 83, 9, 0.2)' },
+              '100%': { boxShadow: '0 0 16px rgba(180, 83, 9, 0.6)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f4eee1;
+      background-image: 
+        radial-gradient(#e5dbca 0.75px, transparent 0.75px), 
+        radial-gradient(#dcd0bd 0.75px, #f4eee1 0.75px);
+      background-size: 32px 32px;
+      background-position: 0 0, 16px 16px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dark body {
+      background-color: #171513;
+      background-image: 
+        radial-gradient(#26221c 0.75px, transparent 0.75px), 
+        radial-gradient(#211d17 0.75px, #171513 0.75px);
+      background-size: 32px 32px;
+      background-position: 0 0, 16px 16px;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.04);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c4b59d;
+      border-radius: 4px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #473e33;
+    }
+
+    .capsule-slot {
+      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      user-select: none;
+    }
+    .capsule-slot:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body class="text-parchment-ink dark:text-nightparchment-ink min-h-screen flex flex-col font-sans antialiased selection:bg-amber-200 dark:selection:bg-amber-900 selection:text-amber-950 dark:selection:text-amber-100">
+
+  <header class="sticky top-0 z-40 bg-parchment-card/95 dark:bg-nightparchment-card/95 backdrop-blur-md border-b border-parchment-border dark:border-nightparchment-border px-3 sm:px-5 py-2.5 shadow-sm transition-colors">
+    <div class="max-w-[1750px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Page Dropdown -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-700 to-amber-900 dark:from-amber-600 dark:to-stone-900 flex items-center justify-center text-amber-100 shadow-md font-serif text-xl font-bold flex-shrink-0 border border-amber-600/40">
+          🧬
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-serif font-bold text-base md:text-lg tracking-wide text-parchment-ink dark:text-nightparchment-ink hidden sm:inline">
+              ESL Morpho Quest
+            </span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-parchment-cardAlt dark:bg-nightparchment-cardAlt text-amber-800 dark:text-amber-400 border border-parchment-border dark:border-nightparchment-border">
+              A2 — B1 Word Forms
+            </span>
+          </div>
+          <!-- 12 Page Dropdown Selector -->
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <select id="page-dropdown" class="bg-parchment-base dark:bg-nightparchment-base text-parchment-ink dark:text-nightparchment-ink text-xs md:text-sm font-semibold rounded-lg px-2.5 py-1 border border-parchment-borderDark dark:border-nightparchment-border focus:outline-none focus:ring-2 focus:ring-amber-600 max-w-[220px] sm:max-w-[340px] truncate cursor-pointer shadow-inner">
+              <!-- Populated dynamically via JS -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Page Stepper Navigation -->
+      <div class="flex items-center gap-1 bg-parchment-cardAlt dark:bg-nightparchment-cardAlt p-1 rounded-xl border border-parchment-border dark:border-nightparchment-border shadow-inner">
+        <button id="nav-prev-btn" title="Previous Activity Page" class="p-1.5 md:px-2.5 md:py-1 rounded-lg bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-base dark:hover:bg-nightparchment-base text-parchment-ink dark:text-nightparchment-ink text-xs font-bold shadow-xs transition disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 border border-parchment-border/70 dark:border-nightparchment-border">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+          <span class="hidden md:inline">Prev</span>
+        </button>
+
+        <span id="nav-page-badge" class="px-2.5 py-1 text-xs md:text-sm font-black font-serif text-amber-800 dark:text-amber-400 whitespace-nowrap min-w-[70px] text-center">
+          1 / 12
+        </span>
+
+        <button id="nav-next-btn" title="Next Activity Page" class="p-1.5 md:px-2.5 md:py-1 rounded-lg bg-amber-700 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 text-amber-50 text-xs font-bold shadow-xs transition disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1">
+          <span class="hidden md:inline">Next</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <!-- Controls: Synchronized Font Scaler, Reveal All, Reset, Theme Toggle -->
+      <div class="flex items-center gap-2">
+        <!-- Synchronized Font Scaler -->
+        <div class="flex items-center bg-parchment-cardAlt dark:bg-nightparchment-cardAlt p-1 rounded-xl border border-parchment-border dark:border-nightparchment-border">
+          <button id="font-decrease-btn" title="Decrease Font Size" class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-base dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink text-xs font-black transition shadow-xs border border-parchment-border/60 dark:border-nightparchment-border">
+            A-
+          </button>
+          <span id="font-size-label" class="px-2 text-[11px] md:text-xs font-bold font-serif text-amber-900 dark:text-amber-300 min-w-[75px] text-center select-none">
+            Large
+          </span>
+          <button id="font-increase-btn" title="Increase Font Size (Projector Mode)" class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-base dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink text-xs font-black transition shadow-xs border border-parchment-border/60 dark:border-nightparchment-border">
+            A+
+          </button>
+        </div>
+
+        <!-- Reveal All Answers -->
+        <button id="reveal-all-btn" class="px-2.5 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600 text-amber-50 text-xs font-bold shadow-xs transition active:scale-95 flex items-center gap-1.5 border border-amber-900/40" title="Reveal all slots on this page">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <span class="hidden sm:inline">Reveal All</span>
+        </button>
+
+        <!-- Reset Button -->
+        <button id="reset-all-btn" class="px-2.5 py-1.5 rounded-xl bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-cardAlt dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink text-xs font-bold border border-parchment-borderDark dark:border-nightparchment-border transition active:scale-95 flex items-center gap-1.5" title="Clear and hide answers">
+          <svg class="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span class="hidden sm:inline">Reset</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="theme-toggle-btn" title="Toggle Antique Parchment / Dark Mode" class="p-2 rounded-xl bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-cardAlt dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink border border-parchment-borderDark dark:border-nightparchment-border transition shadow-xs">
+          <svg id="theme-sun-icon" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <svg id="theme-moon-icon" class="w-4 h-4 block dark:hidden text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        </button>
+
+        <!-- Fullscreen Toggle -->
+        <button id="fullscreen-btn" title="Toggle Fullscreen" class="p-2 rounded-xl bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-cardAlt dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink border border-parchment-borderDark dark:border-nightparchment-border transition shadow-xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-[1750px] w-full mx-auto p-3 sm:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- LEFT REGION: 3 Thematic Sentence Sets (8 cols) -->
+    <div class="lg:col-span-8 xl:col-span-8 flex flex-col gap-5">
+      
+      <!-- Page Metadata Banner -->
+      <section class="bg-parchment-card dark:bg-nightparchment-card border border-parchment-border dark:border-nightparchment-border rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3.5">
+          <div id="page-icon" class="w-12 h-12 rounded-2xl bg-parchment-cardAlt dark:bg-nightparchment-cardAlt text-amber-900 dark:text-amber-300 border border-parchment-border dark:border-nightparchment-border flex items-center justify-center text-2xl shadow-inner flex-shrink-0">
+            📚
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="page-number-label" class="text-xs font-black uppercase tracking-wider text-amber-800 dark:text-amber-400 font-serif">Page 1</span>
+              <span class="text-parchment-inkMuted dark:text-nightparchment-inkMuted">•</span>
+              <span id="page-topic-label" class="text-xs font-semibold text-parchment-inkMuted dark:text-nightparchment-inkMuted">School Life & Study Habits</span>
+            </div>
+            <h2 id="page-title" class="text-xl sm:text-2xl font-serif font-black text-parchment-ink dark:text-nightparchment-ink tracking-tight">Academic Success & Focus</h2>
+          </div>
+        </div>
+
+        <div id="roots-summary-container" class="flex flex-wrap items-center gap-1.5">
+          <!-- Populated dynamically: 3 root word badges -->
+        </div>
+      </section>
+
+      <!-- Container for the 3 Sets of 3 Sentences -->
+      <section id="sentence-sets-container" class="flex flex-col gap-6 pb-8">
+        <!-- Rendered dynamically via JavaScript -->
+      </section>
+    </div>
+
+    <!-- RIGHT REGION: Word Bank Sidebar with strictly vertical stack and Vietnamese translation toggle -->
+    <aside class="lg:col-span-4 xl:col-span-4 lg:sticky lg:top-20 flex flex-col gap-4">
+      
+      <div class="bg-parchment-card dark:bg-nightparchment-card border border-parchment-border dark:border-nightparchment-border rounded-2xl p-4 sm:p-5 shadow-md flex flex-col gap-4">
+        
+        <!-- Header & Progress Count -->
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-600 dark:bg-amber-400 animate-pulse"></span>
+              <h3 class="text-sm font-serif font-black uppercase tracking-wider text-parchment-ink dark:text-nightparchment-ink">Word Bank (9 Forms)</h3>
+            </div>
+            <span id="sidebar-progress-badge" class="text-xs font-bold px-2 py-0.5 rounded-md bg-parchment-cardAlt dark:bg-nightparchment-cardAlt text-amber-900 dark:text-amber-300 border border-parchment-border dark:border-nightparchment-border">
+              0 / 9 used
+            </span>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="w-full h-2 bg-parchment-cardAlt dark:bg-nightparchment-cardAlt rounded-full overflow-hidden border border-parchment-border dark:border-nightparchment-border">
+            <div id="sidebar-progress-bar" class="h-full bg-gradient-to-r from-amber-700 to-amber-500 dark:from-amber-600 dark:to-amber-400 transition-all duration-300" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Instructional Guidance -->
+        <p class="text-xs text-parchment-inkMuted dark:text-nightparchment-inkMuted leading-relaxed border-b border-parchment-border/70 dark:border-nightparchment-border/70 pb-3">
+          <strong class="text-parchment-ink dark:text-nightparchment-ink">Rule:</strong> Tap a word card to select it, then tap its sentence slot. Tap the <strong class="text-red-600 dark:text-red-400 font-black">red star button (⭐)</strong> to toggle the Vietnamese translation!
+        </p>
+
+        <!-- Active Selected Word Notification -->
+        <div id="active-selected-callout" class="hidden p-3 rounded-xl bg-amber-100/90 dark:bg-amber-950/80 border border-amber-400 dark:border-amber-700 text-xs flex items-center justify-between gap-2 animate-pop shadow-xs">
+          <div class="flex items-center gap-2 truncate">
+            <span class="animate-bounce">👉</span>
+            <span class="text-parchment-ink dark:text-nightparchment-ink font-serif">Selected: <strong id="active-selected-text" class="text-amber-800 dark:text-amber-300 uppercase font-black tracking-wider text-sm font-sans"></strong></span>
+          </div>
+          <button id="cancel-selection-btn" class="text-xs font-bold text-amber-700 hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-200 underline">Cancel</button>
+        </div>
+
+        <!-- STRICTLY VERTICAL STACK OF 9 VOCABULARY CARDS -->
+        <div class="flex flex-col gap-2.5 max-h-[66vh] overflow-y-auto pr-1" id="sidebar-vertical-stack">
+          <!-- Dynamically populated via JavaScript -->
+        </div>
+
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Interactive Feedback Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 translate-y-24 opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-parchment-ink text-parchment-card dark:bg-nightparchment-cardAlt dark:text-nightparchment-ink border border-amber-600/40 shadow-2xl text-xs md:text-sm font-semibold backdrop-blur-md">
+    <span id="toast-icon">✨</span>
+    <span id="toast-text">Feedback message</span>
+  </div>
+
+  <script>
+    const PAGES_DATA = [
+      {
+        id: 1,
+        title: "Academic Success & Study Habits",
+        topic: "School Life, Diligence & Exam Focus",
+        icon: "📚",
+        sets: [
+          {
+            root: "SUCCESS",
+            concept: "Expressing achievement in final English exams",
+            tag: "Verb ➔ Noun ➔ Adjective",
+            sentences: [
+              {
+                id: "p1-s1",
+                label: "A",
+                segments: ["If you study diligently every day, you will surely ", { word: "succeed", key: "p1-w1", vietnamese: "thành công (động từ)" }, " in your final exams."]
+              },
+              {
+                id: "p1-s2",
+                label: "B",
+                segments: ["Your high score on the semester test was a great ", { word: "success", key: "p1-w2", vietnamese: "sự thành công (danh từ)" }, " for our class."]
+              },
+              {
+                id: "p1-s3",
+                label: "C",
+                segments: ["The hardworking student was extremely ", { word: "successful", key: "p1-w3", vietnamese: "thành công, đạt kết quả tốt (tính từ)" }, " in her English presentation."]
+              }
+            ]
+          },
+          {
+            root: "PRACTICE",
+            concept: "Rehearsing piano music in the school band",
+            tag: "Noun ➔ Verb ➔ Gerund",
+            sentences: [
+              {
+                id: "p1-s4",
+                label: "A",
+                segments: ["Daily piano ", { word: "practice", key: "p1-w4", vietnamese: "sự luyện tập (danh từ)" }, " is necessary before performing on stage."]
+              },
+              {
+                id: "p1-s5",
+                label: "B",
+                segments: ["Every afternoon after school, Linh ", { word: "practices", key: "p1-w5", vietnamese: "luyện tập (động từ ngôi thứ ba số ít)" }, " the keyboard in the music room."]
+              },
+              {
+                id: "p1-s6",
+                label: "C",
+                segments: ["Linh spent two full hours ", { word: "practicing", key: "p1-w6", vietnamese: "đang luyện tập / việc luyện tập (danh động từ)" }, " before the music contest began."]
+              }
+            ]
+          },
+          {
+            root: "CLEAR",
+            concept: "Delivering instructions so students comprehend fully",
+            tag: "Adjective ➔ Adverb ➔ Noun",
+            sentences: [
+              {
+                id: "p1-s7",
+                label: "A",
+                segments: ["Teacher David gave very ", { word: "clear", key: "p1-w7", vietnamese: "rõ ràng, mạch lạc (tính từ)" }, " instructions for our homework."]
+              },
+              {
+                id: "p1-s8",
+                label: "B",
+                segments: ["The teacher explained the grammar rules ", { word: "clearly", key: "p1-w8", vietnamese: "một cách rõ ràng (phó từ/trạng từ)" }, " so everyone understood."]
+              },
+              {
+                id: "p1-s9",
+                label: "C",
+                segments: ["The teacher spoke with remarkable ", { word: "clarity", key: "p1-w9", vietnamese: "sự rõ ràng, tính sáng sủa (danh từ)" }, " during the morning assembly."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 2,
+        title: "Saigon Scooter Traffic & Commute",
+        topic: "City Streets, Roundabouts & Commuter Safety",
+        icon: "🛵",
+        sets: [
+          {
+            root: "CARE",
+            concept: "Riding safely through packed Saigon roundabouts",
+            tag: "Noun ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p2-s1",
+                label: "A",
+                segments: ["Uncle Tuấn always rides with great ", { word: "care", key: "p2-w1", vietnamese: "sự cẩn thận, chu đáo (danh từ)" }, " through the busy traffic."]
+              },
+              {
+                id: "p2-s2",
+                label: "B",
+                segments: ["Uncle Tuấn is always very ", { word: "careful", key: "p2-w2", vietnamese: "cẩn thận, cẩn trọng (tính từ)" }, " whenever he enters the roundabout."]
+              },
+              {
+                id: "p2-s3",
+                label: "C",
+                segments: ["Uncle Tuấn steers his scooter ", { word: "carefully", key: "p2-w3", vietnamese: "một cách cẩn thận (trạng từ)" }, " around large delivery trucks."]
+              }
+            ]
+          },
+          {
+            root: "SAFE",
+            concept: "Protecting commuters with certified helmets",
+            tag: "Noun ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p2-s4",
+                label: "A",
+                segments: ["Wearing a helmet guarantees your personal ", { word: "safety", key: "p2-w4", vietnamese: "sự an toàn (danh từ)" }, " on the boulevard."]
+              },
+              {
+                id: "p2-s5",
+                label: "B",
+                segments: ["Fastening your chin strap keeps you ", { word: "safe", key: "p2-w5", vietnamese: "an toàn (tính từ)" }, " on the motorbike."]
+              },
+              {
+                id: "p2-s6",
+                label: "C",
+                segments: ["With a secure helmet, you can travel ", { word: "safely", key: "p2-w6", vietnamese: "một cách an toàn (trạng từ)" }, " across the long bridge."]
+              }
+            ]
+          },
+          {
+            root: "SLOW",
+            concept: "Traffic speed reduction during heavy storms",
+            tag: "Verb ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p2-s7",
+                label: "A",
+                segments: ["Heavy monsoon rain quickly ", { word: "slows", key: "p2-w7", vietnamese: "làm chậm lại (động từ ngôi thứ 3 số ít)" }, " down the morning commute."]
+              },
+              {
+                id: "p2-s8",
+                label: "B",
+                segments: ["Motorbike progress becomes extremely ", { word: "slow", key: "p2-w8", vietnamese: "chậm chạp (tính từ)" }, " because of the flooded street."]
+              },
+              {
+                id: "p2-s9",
+                label: "C",
+                segments: ["Scooters move very ", { word: "slowly", key: "p2-w9", vietnamese: "một cách chậm rãi (trạng từ)" }, " through the rain puddles."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 3,
+        title: "Online Gaming & Esports",
+        topic: "Multiplayer Guilds, Connectivity & Tournaments",
+        icon: "🎮",
+        sets: [
+          {
+            root: "COMPETE",
+            concept: "Taking part in an online guild championship",
+            tag: "Verb ➔ Noun ➔ Adjective",
+            sentences: [
+              {
+                id: "p3-s1",
+                label: "A",
+                segments: ["Our four-player team will ", { word: "compete", key: "p3-w1", vietnamese: "thi đấu, cạnh tranh (động từ)" }, " in the tournament tonight."]
+              },
+              {
+                id: "p3-s2",
+                label: "B",
+                segments: ["Our school guild entered an intense esports ", { word: "competition", key: "p3-w2", vietnamese: "cuộc thi đấu, giải đấu (danh từ)" }, " this weekend."]
+              },
+              {
+                id: "p3-s3",
+                label: "C",
+                segments: ["Ranked multiplayer matches are always highly ", { word: "competitive", key: "p3-w3", vietnamese: "có tính cạnh tranh gay gắt (tính từ)" }, " and fast-paced."]
+              }
+            ]
+          },
+          {
+            root: "CONNECT",
+            concept: "Maintaining stable fiber-optic game internet",
+            tag: "Noun ➔ Verb ➔ Adjective",
+            sentences: [
+              {
+                id: "p3-s4",
+                label: "A",
+                segments: ["A reliable internet ", { word: "connection", key: "p3-w4", vietnamese: "sự kết nối đường truyền (danh từ)" }, " is essential for low ping."]
+              },
+              {
+                id: "p3-s5",
+                label: "B",
+                segments: ["Huy quickly ", { word: "connected", key: "p3-w5", vietnamese: "đã kết nối (động từ quá khứ đơn)" }, " his computer to the Wi-Fi router."]
+              },
+              {
+                id: "p3-s6",
+                label: "C",
+                segments: ["His hero froze because the game was suddenly ", { word: "disconnected", key: "p3-w6", vietnamese: "bị mất kết nối (tính từ/phân từ)" }, " from the server."]
+              }
+            ]
+          },
+          {
+            root: "WIN",
+            concept: "Emerging victorious in the championship arena",
+            tag: "Verb ➔ Singular Noun ➔ Plural Noun",
+            sentences: [
+              {
+                id: "p3-s7",
+                label: "A",
+                segments: ["With smart team strategy, our guild can ", { word: "win", key: "p3-w7", vietnamese: "chiến thắng (động từ nguyên mẫu)" }, " the tournament cup."]
+              },
+              {
+                id: "p3-s8",
+                label: "B",
+                segments: ["Duy was awarded the title of overall ", { word: "winner", key: "p3-w8", vietnamese: "người chiến thắng (danh từ số ít)" }, " in the battle arena."]
+              },
+              {
+                id: "p3-s9",
+                label: "C",
+                segments: ["All four tournament champions celebrated as the proud ", { word: "winners", key: "p3-w9", vietnamese: "những người chiến thắng (danh từ số nhiều)" }, " on stage."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 4,
+        title: "Vietnamese Street Food & Snacks",
+        topic: "Boba Milk Tea, Herbs & Bánh Mì Flavors",
+        icon: "🥖",
+        sets: [
+          {
+            root: "SWEET",
+            concept: "Describing sugar balance in boba milk tea",
+            tag: "Adjective ➔ Noun ➔ Adverb",
+            sentences: [
+              {
+                id: "p4-s1",
+                label: "A",
+                segments: ["This glass of roasted oolong tea is deliciously ", { word: "sweet", key: "p4-w1", vietnamese: "ngọt ngào (tính từ)" }, "."]
+              },
+              {
+                id: "p4-s2",
+                label: "B",
+                segments: ["You can reduce the level of ", { word: "sweetness", key: "p4-w2", vietnamese: "độ ngọt, lượng đường (danh từ)" }, " if you prefer less sugar."]
+              },
+              {
+                id: "p4-s3",
+                label: "C",
+                segments: ["The ripe mango dessert smelled ", { word: "sweetly", key: "p4-w3", vietnamese: "một cách thơm ngọt (trạng từ)" }, " across the dessert cafe."]
+              }
+            ]
+          },
+          {
+            root: "SPICE",
+            concept: "Heat levels in street cart chili sauce",
+            tag: "Adjective ➔ Plural Noun ➔ Comparative",
+            sentences: [
+              {
+                id: "p4-s4",
+                label: "A",
+                segments: ["Be careful with that red sauce because it is very ", { word: "spicy", key: "p4-w4", vietnamese: "cay nồng (tính từ)" }, "."]
+              },
+              {
+                id: "p4-s5",
+                label: "B",
+                segments: ["Cô Lan mixes five aromatic herbal ", { word: "spices", key: "p4-w5", vietnamese: "các loại gia vị (danh từ số nhiều)" }, " into her broth."]
+              },
+              {
+                id: "p4-s6",
+                label: "C",
+                segments: ["This bowl of beef noodles is much ", { word: "spicier", key: "p4-w6", vietnamese: "cay hơn (tính từ so sánh hơn)" }, " than the one I had yesterday."]
+              }
+            ]
+          },
+          {
+            root: "FRY",
+            concept: "Crispy snack preparation in hot oil",
+            tag: "Verb ➔ Participle/Adj ➔ Plural Noun",
+            sentences: [
+              {
+                id: "p4-s7",
+                label: "A",
+                segments: ["The vendor will ", { word: "fry", key: "p4-w7", vietnamese: "chiên, rán (động từ)" }, " fresh spring rolls in golden cooking oil."]
+              },
+              {
+                id: "p4-s8",
+                label: "B",
+                segments: ["Crispy ", { word: "fried", key: "p4-w8", vietnamese: "được chiên giòn (phân từ/tính từ)" }, " spring rolls are the most popular street snack."]
+              },
+              {
+                id: "p4-s9",
+                label: "C",
+                segments: ["We ordered two banh mi rolls and a side of hot potato ", { word: "fries", key: "p4-w9", vietnamese: "khoai tây chiên (danh từ số nhiều)" }, "."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 5,
+        title: "Monsoon Weather & Tropical Seasons",
+        topic: "Rain Squalls, Sunny Days & Thunderstorms",
+        icon: "⛈️",
+        sets: [
+          {
+            root: "RAIN",
+            concept: "Downpours during humid southern afternoons",
+            tag: "Verb ➔ Adjective ➔ Noun",
+            sentences: [
+              {
+                id: "p5-s1",
+                label: "A",
+                segments: ["In Ho Chi Minh City, it often ", { word: "rains", key: "p5-w1", vietnamese: "mưa (động từ ngôi thứ ba số ít)" }, " heavily during late July afternoons."]
+              },
+              {
+                id: "p5-s2",
+                label: "B",
+                segments: ["Pack an umbrella because today will be another wet, ", { word: "rainy", key: "p5-w2", vietnamese: "có mưa, ẩm ướt (tính từ)" }, " day."]
+              },
+              {
+                id: "p5-s3",
+                label: "C",
+                segments: ["The weather station measured continuous ", { word: "rainfall", key: "p5-w3", vietnamese: "lượng mưa (danh từ)" }, " throughout the district."]
+              }
+            ]
+          },
+          {
+            root: "SUN",
+            concept: "High temperature and bright morning light",
+            tag: "Noun ➔ Adjective ➔ Superlative",
+            sentences: [
+              {
+                id: "p5-s4",
+                label: "A",
+                segments: ["Direct rays from the blazing midday ", { word: "sun", key: "p5-w4", vietnamese: "mặt trời, ánh nắng (danh từ)" }, " heated the sidewalk."]
+              },
+              {
+                id: "p5-s5",
+                label: "B",
+                segments: ["Saturday morning was warm and ", { word: "sunny", key: "p5-w5", vietnamese: "nhiều nắng, có nắng đẹp (tính từ)" }, ", ideal for cycling."]
+              },
+              {
+                id: "p5-s6",
+                label: "C",
+                segments: ["March is usually the hottest and ", { word: "sunniest", key: "p5-w6", vietnamese: "nhiều nắng nhất (so sánh hơn nhất)" }, " period of the dry season."]
+              }
+            ]
+          },
+          {
+            root: "STORM",
+            concept: "Approaching tropical squalls and gale winds",
+            tag: "Noun ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p5-s7",
+                label: "A",
+                segments: ["Black thunderclouds proved that a sudden tropical ", { word: "storm", key: "p5-w7", vietnamese: "cơn giông, bão tố (danh từ)" }, " was coming."]
+              },
+              {
+                id: "p5-s8",
+                label: "B",
+                segments: ["Ferry trips were canceled because of rough and ", { word: "stormy", key: "p5-w8", vietnamese: "giông bão, biển động (tính từ)" }, " sea waters."]
+              },
+              {
+                id: "p5-s9",
+                label: "C",
+                segments: ["The wind blew ", { word: "stormily", key: "p5-w9", vietnamese: "một cách dữ dội như bão (trạng từ)" }, " across the school courtyard trees."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 6,
+        title: "Friendship & School Clubs",
+        topic: "Companionship, Mutual Support & Sincerity",
+        icon: "🤝",
+        sets: [
+          {
+            root: "FRIEND",
+            concept: "Deep bonding and warm hospitality among peers",
+            tag: "Noun ➔ Adjective ➔ Noun",
+            sentences: [
+              {
+                id: "p6-s1",
+                label: "A",
+                segments: ["Bảo has been my most dependable school ", { word: "friend", key: "p6-w1", vietnamese: "người bạn (danh từ)" }, " since primary school."]
+              },
+              {
+                id: "p6-s2",
+                label: "B",
+                segments: ["The new classmate has a bright, smiling, and ", { word: "friendly", key: "p6-w2", vietnamese: "thân thiện, hòa đồng (tính từ)" }, " demeanor."]
+              },
+              {
+                id: "p6-s3",
+                label: "C",
+                segments: ["Joining the robotics club together strengthened their ", { word: "friendship", key: "p6-w3", vietnamese: "tình bạn, tình hữu nghị (danh từ)" }, "."]
+              }
+            ]
+          },
+          {
+            root: "HELP",
+            concept: "Assisting classmates with science club setup",
+            tag: "Noun ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p6-s4",
+                label: "A",
+                segments: ["Mai offered her generous ", { word: "help", key: "p6-w4", vietnamese: "sự giúp đỡ (danh từ)" }, " to carry the science equipment."]
+              },
+              {
+                id: "p6-s5",
+                label: "B",
+                segments: ["Her clear revision notes were tremendously ", { word: "helpful", key: "p6-w5", vietnamese: "hữu ích, hay giúp đỡ (tính từ)" }, " for the whole group."]
+              },
+              {
+                id: "p6-s6",
+                label: "C",
+                segments: ["Mai guided the younger students ", { word: "helpfully", key: "p6-w6", vietnamese: "một cách nhiệt tình/hữu ích (trạng từ)" }, " through the science lab."]
+              }
+            ]
+          },
+          {
+            root: "HONEST",
+            concept: "Speaking truthfully and with integrity",
+            tag: "Adjective ➔ Adverb ➔ Noun",
+            sentences: [
+              {
+                id: "p6-s7",
+                label: "A",
+                segments: ["A reliable study partner is always completely ", { word: "honest", key: "p6-w7", vietnamese: "trung thực, thật thà (tính từ)" }, " with you."]
+              },
+              {
+                id: "p6-s8",
+                label: "B",
+                segments: ["Minh answered the teacher's inquiry ", { word: "honestly", key: "p6-w8", vietnamese: "một cách thành thật (trạng từ)" }, " when asked about the test."]
+              },
+              {
+                id: "p6-s9",
+                label: "C",
+                segments: ["The teacher praised Minh's moral courage and pure ", { word: "honesty", key: "p6-w9", vietnamese: "lòng trung thực, tính thành thật (danh từ)" }, "."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 7,
+        title: "Weekend Cinema & Blockbusters",
+        topic: "Movie Premiers, Thrillers & Stunt Acting",
+        icon: "🎬",
+        sets: [
+          {
+            root: "EXCITE",
+            concept: "High anticipation for the superhero premier",
+            tag: "Adjective ➔ Adjective ➔ Noun",
+            sentences: [
+              {
+                id: "p7-s1",
+                label: "A",
+                segments: ["The teenagers were wildly ", { word: "excited", key: "p7-w1", vietnamese: "hào hứng, phấn khích (tính từ chỉ cảm xúc)" }, " to see the new action movie."]
+              },
+              {
+                id: "p7-s2",
+                label: "B",
+                segments: ["The sci-fi climax was full of fast and ", { word: "exciting", key: "p7-w2", vietnamese: "gây hào hứng, thú vị (tính từ chỉ tính chất)" }, " chase scenes."]
+              },
+              {
+                id: "p7-s3",
+                label: "C",
+                segments: ["The theater lobby was buzzing with loud ", { word: "excitement", key: "p7-w3", vietnamese: "sự hào hứng, niềm phấn khích (danh từ)" }, " before showtime."]
+              }
+            ]
+          },
+          {
+            root: "BORE",
+            concept: "Uninteresting commercials before the main film",
+            tag: "Verb ➔ Adjective ➔ Adjective",
+            sentences: [
+              {
+                id: "p7-s4",
+                label: "A",
+                segments: ["Watching twenty minutes of advertisements really ", { word: "bores", key: "p7-w4", vietnamese: "gây buồn chán (động từ ngôi 3 số ít)" }, " Khoa."]
+              },
+              {
+                id: "p7-s5",
+                label: "B",
+                segments: ["Khoa looked completely ", { word: "bored", key: "p7-w5", vietnamese: "bị buồn chán (tính từ chỉ cảm xúc)" }, " while waiting for the trailers to finish."]
+              },
+              {
+                id: "p7-s6",
+                label: "C",
+                segments: ["The introductory commercial was so dull and ", { word: "boring", key: "p7-w6", vietnamese: "tẻ nhạt, chán ngắt (tính từ tính chất)" }, " that people yawned."]
+              }
+            ]
+          },
+          {
+            root: "ACT",
+            concept: "Theatrical performance and action choreography",
+            tag: "Noun ➔ Noun ➔ Verb",
+            sentences: [
+              {
+                id: "p7-s7",
+                label: "A",
+                segments: ["The lead ", { word: "actor", key: "p7-w7", vietnamese: "nam diễn viên (danh từ)" }, " did all his own motorcycle stunts."]
+              },
+              {
+                id: "p7-s8",
+                label: "B",
+                segments: ["The summer thriller features non-stop stunt ", { word: "action", key: "p7-w8", vietnamese: "hành động (danh từ)" }, " from start to finish."]
+              },
+              {
+                id: "p7-s9",
+                label: "C",
+                segments: ["Whenever he steps onto the movie set, he ", { word: "acts", key: "p7-w9", vietnamese: "diễn xuất (động từ ngôi thứ 3 số ít)" }, " with intense energy."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 8,
+        title: "Science Inventions & Innovation",
+        topic: "Young Creators, Solar Energy & Lab Discoveries",
+        icon: "🔬",
+        sets: [
+          {
+            root: "INVENT",
+            concept: "Designing original technology for community use",
+            tag: "Verb ➔ Noun ➔ Noun",
+            sentences: [
+              {
+                id: "p8-s1",
+                label: "A",
+                segments: ["Teen innovators hope to ", { word: "invent", key: "p8-w1", vietnamese: "phát minh, sáng chế (động từ)" }, " cheap solar power tools."]
+              },
+              {
+                id: "p8-s2",
+                label: "B",
+                segments: ["Their recycled water purifier was the smartest ", { word: "invention", key: "p8-w2", vietnamese: "phát minh, sáng chế (danh từ)" }, " at the school expo."]
+              },
+              {
+                id: "p8-s3",
+                label: "C",
+                segments: ["Thomas Edison remains a celebrated historic ", { word: "inventor", key: "p8-w3", vietnamese: "nhà phát minh (danh từ chỉ người)" }, " worldwide."]
+              }
+            ]
+          },
+          {
+            root: "CREATE",
+            concept: "Original thinking in classroom project design",
+            tag: "Verb ➔ Adjective ➔ Noun",
+            sentences: [
+              {
+                id: "p8-s4",
+                label: "A",
+                segments: ["Students joined forces to ", { word: "create", key: "p8-w4", vietnamese: "tạo ra, sáng tạo nên (động từ)" }, " a model eco-friendly school."]
+              },
+              {
+                id: "p8-s5",
+                label: "B",
+                segments: ["Using coconut shells for garden pots was a very ", { word: "creative", key: "p8-w5", vietnamese: "mang tính sáng tạo (tính từ)" }, " idea."]
+              },
+              {
+                id: "p8-s6",
+                label: "C",
+                segments: ["The science fair judges praised the club's artistic ", { word: "creativity", key: "p8-w6", vietnamese: "sức sáng tạo, tính sáng tạo (danh từ)" }, "."]
+              }
+            ]
+          },
+          {
+            root: "DISCOVER",
+            concept: "Finding rare aquatic species in river ecosystems",
+            tag: "Verb ➔ Noun ➔ Past Verb",
+            sentences: [
+              {
+                id: "p8-s7",
+                label: "A",
+                segments: ["Marine biologists explore the delta to ", { word: "discover", key: "p8-w7", vietnamese: "khám phá, tìm ra (động từ nguyên mẫu)" }, " rare river organisms."]
+              },
+              {
+                id: "p8-s8",
+                label: "B",
+                segments: ["Identifying that rare mangrove frog was a huge scientific ", { word: "discovery", key: "p8-w8", vietnamese: "sự phát hiện, khám phá (danh từ)" }, "."]
+              },
+              {
+                id: "p8-s9",
+                label: "C",
+                segments: ["Last month, researchers ", { word: "discovered", key: "p8-w9", vietnamese: "đã phát hiện ra (động từ quá khứ đơn)" }, " an unusual species of freshwater snail."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 9,
+        title: "Sports, Fitness & Athletic Health",
+        topic: "Track & Field, Strength Building & Conditioning",
+        icon: "🏃‍♂️",
+        sets: [
+          {
+            root: "HEALTH",
+            concept: "Maintaining bodily wellbeing through diet and exercise",
+            tag: "Noun ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p9-s1",
+                label: "A",
+                segments: ["Daily exercise and adequate sleep promote excellent physical ", { word: "health", key: "p9-w1", vietnamese: "sức khỏe (danh từ)" }, "."]
+              },
+              {
+                id: "p9-s2",
+                label: "B",
+                segments: ["Eating steamed vegetables and brown rice provides a very ", { word: "healthy", key: "p9-w2", vietnamese: "lành mạnh, có lợi cho sức khỏe (tính từ)" }, " meal."]
+              },
+              {
+                id: "p9-s3",
+                label: "C",
+                segments: ["Teenagers who choose to live ", { word: "healthily", key: "p9-w3", vietnamese: "một cách lành mạnh (trạng từ)" }, " have higher daily energy."]
+              }
+            ]
+          },
+          {
+            root: "STRONG",
+            concept: "Developing muscle power through gymnastics",
+            tag: "Noun ➔ Adjective ➔ Verb",
+            sentences: [
+              {
+                id: "p9-s4",
+                label: "A",
+                segments: ["Consistent push-ups will build impressive upper body ", { word: "strength", key: "p9-w4", vietnamese: "sức mạnh, thể lực (danh từ)" }, "."]
+              },
+              {
+                id: "p9-s5",
+                label: "B",
+                segments: ["Phúc has become noticeably ", { word: "strong", key: "p9-w5", vietnamese: "mạnh mẽ, khỏe khoắn (tính từ)" }, " after three months on the swim team."]
+              },
+              {
+                id: "p9-s6",
+                label: "C",
+                segments: ["Swimming ten laps every morning will ", { word: "strengthen", key: "p9-w6", vietnamese: "làm cho mạnh mẽ hơn, tăng cường (động từ)" }, " your core muscles."]
+              }
+            ]
+          },
+          {
+            root: "FIT",
+            concept: "Aerobic conditioning for badminton championships",
+            tag: "Noun ➔ Adjective ➔ Comparative",
+            sentences: [
+              {
+                id: "p9-s7",
+                label: "A",
+                segments: ["Running on the school track boosts your cardiovascular ", { word: "fitness", key: "p9-w7", vietnamese: "sự sung sức, thể lực cân đối (danh từ)" }, "."]
+              },
+              {
+                id: "p9-s8",
+                label: "B",
+                segments: ["Practicing jump rope keeps the young badminton player lean and ", { word: "fit", key: "p9-w8", vietnamese: "vừa vặn, sung sức (tính từ)" }, "."]
+              },
+              {
+                id: "p9-s9",
+                label: "C",
+                segments: ["After three weeks of intense practice, Duy feels much ", { word: "fitter", key: "p9-w9", vietnamese: "sung sức hơn, khỏe khoắn hơn (so sánh hơn)" }, " than before."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 10,
+        title: "Travel, Landscapes & Natural Wonders",
+        topic: "Ha Long Bay, Cave Expeditions & Da Lat Hills",
+        icon: "🌄",
+        sets: [
+          {
+            root: "BEAUTY",
+            concept: "Admiring breathtaking views across Ha Long Bay",
+            tag: "Noun ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p10-s1",
+                label: "A",
+                segments: ["Tourists from around the globe admire the magical ", { word: "beauty", key: "p10-w1", vietnamese: "vẻ đẹp, nét đẹp (danh từ)" }, " of Ha Long Bay."]
+              },
+              {
+                id: "p10-s2",
+                label: "B",
+                segments: ["The emerald sea water and limestone cliffs form a ", { word: "beautiful", key: "p10-w2", vietnamese: "xinh đẹp, tuyệt đẹp (tính từ)" }, " landscape."]
+              },
+              {
+                id: "p10-s3",
+                label: "C",
+                segments: ["The afternoon sunset glowed ", { word: "beautifully", key: "p10-w3", vietnamese: "một cách tuyệt đẹp (trạng từ)" }, " over the calm island bay."]
+              }
+            ]
+          },
+          {
+            root: "WONDER",
+            concept: "Experiencing awe inside gigantic cavern halls",
+            tag: "Noun ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p10-s4",
+                label: "A",
+                segments: ["Walking through Son Doong Cave filled the young travelers with ", { word: "wonder", key: "p10-w4", vietnamese: "sự kinh ngạc, kỳ quan (danh từ)" }, "."]
+              },
+              {
+                id: "p10-s5",
+                label: "B",
+                segments: ["Camping under the subterranean roof was a truly ", { word: "wonderful", key: "p10-w5", vietnamese: "tuyệt vời, kỳ diệu (tính từ)" }, " memory."]
+              },
+              {
+                id: "p10-s6",
+                label: "C",
+                segments: ["The limestone formations sparkled ", { word: "wonderfully", key: "p10-w6", vietnamese: "một cách kỳ diệu (trạng từ)" }, " under our LED torches."]
+              }
+            ]
+          },
+          {
+            root: "EXPLORE",
+            concept: "Navigating mountain bike routes around pine ridges",
+            tag: "Verb ➔ Noun ➔ Noun",
+            sentences: [
+              {
+                id: "p10-s7",
+                label: "A",
+                segments: ["The teens rented mountain bikes to ", { word: "explore", key: "p10-w7", vietnamese: "khám phá, thám hiểm (động từ)" }, " the misty pine forests of Da Lat."]
+              },
+              {
+                id: "p10-s8",
+                label: "B",
+                segments: ["A brave mountain ", { word: "explorer", key: "p10-w8", vietnamese: "nhà thám hiểm (danh từ chỉ người)" }, " guided the students along the ridge trail."]
+              },
+              {
+                id: "p10-s9",
+                label: "C",
+                segments: ["Their weekend jungle ", { word: "exploration", key: "p10-w9", vietnamese: "chuyến thám hiểm, sự khám phá (danh từ)" }, " led to a hidden freshwater waterfall."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 11,
+        title: "Art, Music & Festival Performances",
+        topic: "Bamboo Flutes, Synchronized Dance & Hoi An Lanterns",
+        icon: "🎭",
+        sets: [
+          {
+            root: "MUSIC",
+            concept: "Traditional instrumental talents on stage",
+            tag: "Noun ➔ Adjective ➔ Noun",
+            sentences: [
+              {
+                id: "p11-s1",
+                label: "A",
+                segments: ["Traditional folk ", { word: "music", key: "p11-w1", vietnamese: "âm nhạc (danh từ)" }, " features peaceful bamboo flute sounds."]
+              },
+              {
+                id: "p11-s2",
+                label: "B",
+                segments: ["Lan exhibited outstanding ", { word: "musical", key: "p11-w2", vietnamese: "thuộc về âm nhạc, có năng khiếu âm nhạc (tính từ)" }, " ability on the acoustic guitar."]
+              },
+              {
+                id: "p11-s3",
+                label: "C",
+                segments: ["A talented young ", { word: "musician", key: "p11-w3", vietnamese: "nhạc sĩ, nghệ sĩ biểu diễn âm nhạc (danh từ chỉ người)" }, " played the traditional monoid instrument."]
+              }
+            ]
+          },
+          {
+            root: "PERFORM",
+            concept: "Youth dance troupe routines and curtain calls",
+            tag: "Verb ➔ Noun ➔ Plural Noun",
+            sentences: [
+              {
+                id: "p11-s4",
+                label: "A",
+                segments: ["The school club will ", { word: "perform", key: "p11-w4", vietnamese: "biểu diễn, trình diễn (động từ)" }, " a dynamic modern dance on stage."]
+              },
+              {
+                id: "p11-s5",
+                label: "B",
+                segments: ["Their synchronized hip-hop ", { word: "performance", key: "p11-w5", vietnamese: "tiết mục biểu diễn, phần trình diễn (danh từ)" }, " received huge applause from parents."]
+              },
+              {
+                id: "p11-s6",
+                label: "C",
+                segments: ["All twelve stage ", { word: "performers", key: "p11-w6", vietnamese: "những người biểu diễn (danh từ số nhiều)" }, " bowed politely as the music ended."]
+              }
+            ]
+          },
+          {
+            root: "COLOUR",
+            concept: "Silk lanterns brightening Hoi An alleyways",
+            tag: "Noun ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p11-s7",
+                label: "A",
+                segments: ["Handmade silk lanterns add warm ", { word: "colour", key: "p11-w7", vietnamese: "màu sắc (danh từ)" }, " to the ancient streets."]
+              },
+              {
+                id: "p11-s8",
+                label: "B",
+                segments: ["The night market was illuminated with ", { word: "colourful", key: "p11-w8", vietnamese: "nhiều màu sắc sặc sỡ (tính từ)" }, " paper lamps."]
+              },
+              {
+                id: "p11-s9",
+                label: "C",
+                segments: ["The wooden sampan was decorated ", { word: "colourfully", key: "p11-w9", vietnamese: "một cách rực rỡ sắc màu (trạng từ)" }, " for the lantern parade."]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        id: 12,
+        title: "Decisions, Confidence & Future Growth",
+        topic: "Career Aspirations, Speech Contests & Progress",
+        icon: "🌱",
+        sets: [
+          {
+            root: "DECIDE",
+            concept: "Choosing high school specialized streams and courses",
+            tag: "Verb ➔ Noun ➔ Adjective",
+            sentences: [
+              {
+                id: "p12-s1",
+                label: "A",
+                segments: ["Teenagers must carefully ", { word: "decide", key: "p12-w1", vietnamese: "quyết định (động từ)" }, " which high school majors to pursue."]
+              },
+              {
+                id: "p12-s2",
+                label: "B",
+                segments: ["Selecting the computer science track was an important ", { word: "decision", key: "p12-w2", vietnamese: "sự quyết định (danh từ)" }, " for Nam."]
+              },
+              {
+                id: "p12-s3",
+                label: "C",
+                segments: ["When time was running out, she took ", { word: "decisive", key: "p12-w3", vietnamese: "mang tính quyết đoán, dứt khoát (tính từ)" }, " action to conclude her speech."]
+              }
+            ]
+          },
+          {
+            root: "CONFIDENT",
+            concept: "Delivering public speeches without hesitation",
+            tag: "Noun ➔ Adjective ➔ Adverb",
+            sentences: [
+              {
+                id: "p12-s4",
+                label: "A",
+                segments: ["Daily conversation drills give students the ", { word: "confidence", key: "p12-w4", vietnamese: "sự tự tin, lòng tin (danh từ)" }, " to present."]
+              },
+              {
+                id: "p12-s5",
+                label: "B",
+                segments: ["With thorough preparation, Trang felt entirely ", { word: "confident", key: "p12-w5", vietnamese: "tự tin (tính từ)" }, " before the judges."]
+              },
+              {
+                id: "p12-s6",
+                label: "C",
+                segments: ["Trang stepped up to the podium and spoke ", { word: "confidently", key: "p12-w6", vietnamese: "một cách tự tin (trạng từ)" }, " to the whole crowd."]
+              }
+            ]
+          },
+          {
+            root: "IMPROVE",
+            concept: "Progress in English fluency through consistent study",
+            tag: "Verb ➔ Noun ➔ Participle/Adj",
+            sentences: [
+              {
+                id: "p12-s7",
+                label: "A",
+                segments: ["Reading English storybooks daily will steadily ", { word: "improve", key: "p12-w7", vietnamese: "cải thiện, nâng cao (động từ)" }, " your vocabulary."]
+              },
+              {
+                id: "p12-s8",
+                label: "B",
+                segments: ["The teacher observed a marked ", { word: "improvement", key: "p12-w8", vietnamese: "sự tiến bộ, cải thiện (danh từ)" }, " in the boy's test scores."]
+              },
+              {
+                id: "p12-s9",
+                label: "C",
+                segments: ["With disciplined revision, his ", { word: "improved", key: "p12-w9", vietnamese: "đã được cải thiện / tiến bộ (phân từ/tính từ)" }, " grammar impressed everyone."]
+              }
+            ]
+          }
+        ]
+      }
+    ];
+
+    let currentPageIndex = 0;
+    let selectedWord = null; // { word, key, vietnamese }
+    let revealedSlots = new Set();
+    let visibleTranslations = new Set();
+
+    // Synchronized font sizing tiers for BOTH sentences and Word Bank sidebar
+    const FONT_SIZES = [
+      { 
+        name: "Regular", 
+        sentenceClass: "text-base md:text-lg", 
+        capsuleClass: "text-sm md:text-base min-w-[90px] px-3.5 py-1",
+        wordTitleClass: "text-base md:text-lg",
+        starBtnClass: "w-7 h-7",
+        starSvgClass: "w-3.5 h-3.5",
+        badgeClass: "w-6 h-6 text-xs"
+      },
+      { 
+        name: "Large", 
+        sentenceClass: "text-lg md:text-xl", 
+        capsuleClass: "text-base md:text-lg min-w-[115px] px-4 py-1.5",
+        wordTitleClass: "text-lg md:text-xl",
+        starBtnClass: "w-8 h-8",
+        starSvgClass: "w-4 h-4",
+        badgeClass: "w-7 h-7 text-sm"
+      },
+      { 
+        name: "XL Projector", 
+        sentenceClass: "text-xl md:text-2xl", 
+        capsuleClass: "text-lg md:text-xl min-w-[140px] px-5 py-2",
+        wordTitleClass: "text-xl md:text-2xl",
+        starBtnClass: "w-9 h-9",
+        starSvgClass: "w-5 h-5",
+        badgeClass: "w-8 h-8 text-base"
+      },
+      { 
+        name: "Huge", 
+        sentenceClass: "text-2xl md:text-3xl", 
+        capsuleClass: "text-xl md:text-2xl min-w-[165px] px-6 py-2.5",
+        wordTitleClass: "text-2xl md:text-3xl",
+        starBtnClass: "w-10 h-10",
+        starSvgClass: "w-6 h-6",
+        badgeClass: "w-9 h-9 text-lg"
+      }
+    ];
+    let currentFontSizeIdx = 1; // Default to 'Large' for classroom projector visibility
+
+    function showToast(message, icon = "✨") {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = message;
+      document.getElementById('toast-icon').textContent = icon;
+      toast.classList.remove('opacity-0', 'translate-y-24', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-24', 'pointer-events-none');
+      }, 2000);
+    }
+
+    function getCurrentTargetWords() {
+      const page = PAGES_DATA[currentPageIndex];
+      const list = [];
+      page.sets.forEach(set => {
+        set.sentences.forEach(s => {
+          s.segments.forEach(seg => {
+            if (typeof seg === 'object' && seg.word) {
+              list.push({ word: seg.word, key: seg.key, vietnamese: seg.vietnamese || "" });
+            }
+          });
+        });
+      });
+      return list;
+    }
+
+    function populateDropdown() {
+      const select = document.getElementById('page-dropdown');
+      select.innerHTML = '';
+      PAGES_DATA.forEach((pg, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${pg.id}. ${pg.title}`;
+        select.appendChild(opt);
+      });
+      select.onchange = (e) => loadPage(parseInt(e.target.value, 10));
+    }
+
+    function renderWordBankSidebar() {
+      const container = document.getElementById('sidebar-vertical-stack');
+      container.innerHTML = '';
+      const targets = getCurrentTargetWords();
+      const fontTier = FONT_SIZES[currentFontSizeIdx];
+
+      // Sort alphabetically for quick scanning and lexical comparison
+      const sortedWords = [...targets].sort((a, b) => a.word.localeCompare(b.word));
+      let placedCount = 0;
+
+      sortedWords.forEach((item, index) => {
+        const isRevealed = revealedSlots.has(item.key);
+        if (isRevealed) placedCount++;
+
+        const isSelected = selectedWord && selectedWord.key === item.key;
+        const isTranslationVisible = visibleTranslations.has(item.key);
+
+        const cardDiv = document.createElement('div');
+        cardDiv.className = `w-full p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 flex flex-col gap-2 shadow-xs cursor-pointer select-none ${
+          isRevealed
+            ? 'bg-parchment-cardAlt/50 dark:bg-nightparchment-cardAlt/40 border-parchment-border/60 dark:border-nightparchment-border/60 text-parchment-inkMuted dark:text-nightparchment-inkMuted opacity-60'
+            : isSelected
+              ? 'bg-amber-100/90 dark:bg-amber-950/80 border-amber-600 dark:border-amber-500 ring-2 ring-amber-500 scale-[1.01] shadow-md animate-warm-glow'
+              : 'bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-cardAlt dark:hover:bg-stone-800 border-parchment-borderDark dark:border-nightparchment-border active:scale-99 text-parchment-ink dark:text-nightparchment-ink'
+        }`;
+
+        // Top Row: Number badge + Large Word Form + Red Star Button
+        const topRow = document.createElement('div');
+        topRow.className = 'flex items-center justify-between gap-3 w-full';
+
+        const leftWrap = document.createElement('div');
+        leftWrap.className = 'flex items-center gap-3 truncate';
+
+        const indexBadge = document.createElement('span');
+        indexBadge.className = `${fontTier.badgeClass} rounded-xl font-serif font-black flex items-center justify-center flex-shrink-0 ${
+          isRevealed 
+            ? 'bg-stone-300 dark:bg-stone-800 text-stone-600 dark:text-stone-400' 
+            : isSelected
+              ? 'bg-amber-700 text-amber-50 font-bold'
+              : 'bg-parchment-cardAlt dark:bg-nightparchment-cardAlt text-amber-900 dark:text-amber-400 border border-parchment-border dark:border-nightparchment-border'
+        }`;
+        indexBadge.textContent = index + 1;
+
+        const wordText = document.createElement('span');
+        wordText.className = `font-black tracking-wide ${fontTier.wordTitleClass} ${isRevealed ? 'line-through' : ''}`;
+        wordText.textContent = item.word;
+
+        leftWrap.appendChild(indexBadge);
+        leftWrap.appendChild(wordText);
+
+        // Right side: Vietnamese Star Button + Placement checkmark
+        const rightWrap = document.createElement('div');
+        rightWrap.className = 'flex items-center gap-2 flex-shrink-0';
+
+        // Red Circle with Yellow Star Button (Vietnamese flag badge style)
+        const starBtn = document.createElement('button');
+        starBtn.type = 'button';
+        starBtn.className = `${fontTier.starBtnClass} rounded-full bg-red-600 hover:bg-red-500 active:scale-95 flex items-center justify-center text-yellow-300 shadow-sm border border-red-700/60 dark:border-red-400/40 flex-shrink-0 transition-transform cursor-pointer ${
+          isTranslationVisible ? 'ring-2 ring-yellow-400 ring-offset-1' : ''
+        }`;
+        starBtn.title = isTranslationVisible ? "Ẩn nghĩa tiếng Việt" : "Hiện nghĩa tiếng Việt (Vietnamese translation)";
+        starBtn.innerHTML = `
+          <svg class="${fontTier.starSvgClass} fill-current text-yellow-300 drop-shadow-xs" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        `;
+
+        starBtn.onclick = (e) => {
+          e.stopPropagation();
+          toggleVietnameseTranslation(item.key, item.vietnamese);
+        };
+
+        rightWrap.appendChild(starBtn);
+
+        if (isRevealed) {
+          const usedTag = document.createElement('span');
+          usedTag.className = 'inline-flex items-center gap-1 text-[11px] font-bold text-stone-600 dark:text-stone-400';
+          usedTag.innerHTML = `<svg class="w-4 h-4 text-emerald-700 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
+          rightWrap.appendChild(usedTag);
+        } else if (isSelected) {
+          const readyTag = document.createElement('span');
+          readyTag.className = 'text-xs font-black text-amber-800 dark:text-amber-300 animate-pulse';
+          readyTag.textContent = 'Ready ✦';
+          rightWrap.appendChild(readyTag);
+        }
+
+        topRow.appendChild(leftWrap);
+        topRow.appendChild(rightWrap);
+        cardDiv.appendChild(topRow);
+
+        // Vietnamese Translation Display Panel
+        if (isTranslationVisible && item.vietnamese) {
+          const transDiv = document.createElement('div');
+          transDiv.className = 'mt-1 px-3 py-1.5 rounded-xl bg-amber-100/90 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-800/70 text-amber-950 dark:text-amber-200 text-xs md:text-sm font-sans font-semibold flex items-center gap-2 animate-pop';
+          transDiv.innerHTML = `
+            <span class="text-base">🇻🇳</span>
+            <span class="italic tracking-wide">${item.vietnamese}</span>
+          `;
+          cardDiv.appendChild(transDiv);
+        }
+
+        if (!isRevealed) {
+          cardDiv.onclick = () => {
+            if (selectedWord && selectedWord.key === item.key) {
+              deselectWord();
+            } else {
+              selectWord(item);
+            }
+          };
+        }
+
+        container.appendChild(cardDiv);
+      });
+
+      // Update progress badges
+      document.getElementById('sidebar-progress-badge').textContent = `${placedCount} / ${targets.length} used`;
+      const pct = targets.length > 0 ? (placedCount / targets.length) * 100 : 0;
+      document.getElementById('sidebar-progress-bar').style.width = `${pct}%`;
+
+      // Update active selection callout
+      const callout = document.getElementById('active-selected-callout');
+      const activeText = document.getElementById('active-selected-text');
+      if (selectedWord) {
+        callout.classList.remove('hidden');
+        activeText.textContent = selectedWord.word;
+      } else {
+        callout.classList.add('hidden');
+      }
+    }
+
+    function toggleVietnameseTranslation(key, vietnameseText) {
+      if (visibleTranslations.has(key)) {
+        visibleTranslations.delete(key);
+      } else {
+        visibleTranslations.add(key);
+        if (vietnameseText) {
+          showToast(`🇻🇳 ${vietnameseText}`, "⭐");
+        }
+      }
+      renderWordBankSidebar();
+    }
+
+    function selectWord(item) {
+      selectedWord = item;
+      renderWordBankSidebar();
+      showToast(`Selected "${item.word}". Tap the blank slot in the sentence!`, "🎯");
+    }
+
+    function deselectWord() {
+      selectedWord = null;
+      renderWordBankSidebar();
+    }
+
+    function renderSentenceSets() {
+      const container = document.getElementById('sentence-sets-container');
+      container.innerHTML = '';
+      const page = PAGES_DATA[currentPageIndex];
+      const fontTier = FONT_SIZES[currentFontSizeIdx];
+
+      page.sets.forEach((set, setIdx) => {
+        // Set Container
+        const setCard = document.createElement('div');
+        setCard.className = 'bg-parchment-card dark:bg-nightparchment-card border border-parchment-border dark:border-nightparchment-border rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col gap-4';
+
+        // Set Header
+        const setHeader = document.createElement('div');
+        setHeader.className = 'flex flex-wrap items-center justify-between gap-2 border-b border-parchment-border/70 dark:border-nightparchment-border/70 pb-3';
+
+        const leftTitle = document.createElement('div');
+        leftTitle.className = 'flex items-center gap-2.5';
+
+        const badge = document.createElement('span');
+        badge.className = 'px-2.5 py-0.5 rounded-lg bg-amber-700 text-amber-50 font-serif font-black text-xs';
+        badge.textContent = `Set ${setIdx + 1}`;
+
+        const rootTag = document.createElement('span');
+        rootTag.className = 'text-xs md:text-sm font-serif font-black tracking-wider uppercase text-amber-900 dark:text-amber-400';
+        rootTag.textContent = `Root: ${set.root}`;
+
+        const conceptLabel = document.createElement('span');
+        conceptLabel.className = 'hidden sm:inline text-xs font-medium text-parchment-inkMuted dark:text-nightparchment-inkMuted';
+        conceptLabel.textContent = `— ${set.concept}`;
+
+        leftTitle.appendChild(badge);
+        leftTitle.appendChild(rootTag);
+        leftTitle.appendChild(conceptLabel);
+
+        const morphTag = document.createElement('span');
+        morphTag.className = 'text-[11px] font-bold px-2 py-0.5 rounded-full bg-parchment-cardAlt dark:bg-nightparchment-cardAlt text-amber-800 dark:text-amber-300 border border-parchment-border dark:border-nightparchment-border';
+        morphTag.textContent = set.tag;
+
+        setHeader.appendChild(leftTitle);
+        setHeader.appendChild(morphTag);
+        setCard.appendChild(setHeader);
+
+        // 3 Sentences in this set
+        const sentencesWrapper = document.createElement('div');
+        sentencesWrapper.className = 'flex flex-col gap-3.5';
+
+        set.sentences.forEach((sentence, sIdx) => {
+          const sRow = document.createElement('div');
+          sRow.className = 'p-3.5 sm:p-4 rounded-xl bg-parchment-cardAlt/50 dark:bg-nightparchment-cardAlt/40 border border-parchment-border/60 dark:border-nightparchment-border/60 flex items-start gap-3 sm:gap-4 transition-all hover:border-amber-600/40';
+
+          const sBadge = document.createElement('span');
+          sBadge.className = 'w-7 h-7 rounded-lg bg-amber-200/80 dark:bg-amber-900/60 text-amber-950 dark:text-amber-200 font-serif font-bold text-xs flex items-center justify-center flex-shrink-0 mt-0.5';
+          sBadge.textContent = `${setIdx + 1}.${sentence.label}`;
+
+          const speechWrap = document.createElement('div');
+          speechWrap.className = `flex-1 ${fontTier.sentenceClass} leading-loose flex flex-wrap items-center gap-x-2 gap-y-2.5 font-serif text-parchment-ink dark:text-nightparchment-ink`;
+
+          sentence.segments.forEach(seg => {
+            if (typeof seg === 'string') {
+              const spanText = document.createElement('span');
+              spanText.textContent = seg;
+              speechWrap.appendChild(spanText);
+            } else {
+              // Capsule Card Slot
+              const capsule = document.createElement('button');
+              capsule.type = 'button';
+              const isRevealed = revealedSlots.has(seg.key);
+              capsule.dataset.key = seg.key;
+              capsule.dataset.word = seg.word;
+
+              if (isRevealed) {
+                capsule.className = `capsule-slot ${fontTier.capsuleClass} rounded-full font-bold font-sans shadow-sm animate-pop bg-amber-700 text-amber-50 border-2 border-amber-600 dark:bg-amber-600 dark:border-amber-400`;
+                capsule.innerHTML = `<span>${seg.word}</span>`;
+                capsule.title = `Click to hide "${seg.word}"`;
+              } else {
+                capsule.className = `capsule-slot ${fontTier.capsuleClass} rounded-full border-2 border-dashed border-amber-700/60 dark:border-amber-500/60 bg-amber-100/50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 font-mono tracking-widest cursor-pointer shadow-inner hover:bg-amber-200/50 dark:hover:bg-amber-900/40`;
+                capsule.innerHTML = `<span>? ? ?</span>`;
+                capsule.title = `Tap with selected word or click directly to reveal!`;
+              }
+
+              capsule.onclick = (e) => {
+                e.stopPropagation();
+                handleCapsuleClick(seg.key, seg.word, capsule);
+              };
+
+              speechWrap.appendChild(capsule);
+            }
+          });
+
+          sRow.appendChild(sBadge);
+          sRow.appendChild(speechWrap);
+          sentencesWrapper.appendChild(sRow);
+        });
+
+        setCard.appendChild(sentencesWrapper);
+        container.appendChild(setCard);
+      });
+    }
+
+    function handleCapsuleClick(key, word, capsuleElement) {
+      if (selectedWord) {
+        if (selectedWord.key === key || selectedWord.word.toLowerCase() === word.toLowerCase()) {
+          revealedSlots.add(key);
+          showToast(`Correct! "${word}" placed.`, "🎉");
+          selectedWord = null;
+          renderWordBankSidebar();
+          renderSentenceSets();
+        } else {
+          capsuleElement.classList.add('animate-shake');
+          setTimeout(() => capsuleElement.classList.remove('animate-shake'), 450);
+          showToast(`Try again! "${selectedWord.word}" does not fit this grammatical form.`, "🤔");
+        }
+        return;
+      }
+
+      // Teacher direct click reveal toggle
+      if (revealedSlots.has(key)) {
+        revealedSlots.delete(key);
+        showToast(`Slot hidden again.`, "🔄");
+      } else {
+        revealedSlots.add(key);
+        showToast(`Revealed: "${word}"`, "✨");
+      }
+      renderWordBankSidebar();
+      renderSentenceSets();
+    }
+
+    function loadPage(index) {
+      currentPageIndex = index;
+      selectedWord = null;
+      visibleTranslations.clear();
+
+      const page = PAGES_DATA[currentPageIndex];
+
+      document.getElementById('page-dropdown').value = index;
+      document.getElementById('nav-page-badge').textContent = `${page.id} / ${PAGES_DATA.length}`;
+      document.getElementById('page-number-label').textContent = `Page ${page.id}`;
+      document.getElementById('page-topic-label').textContent = page.topic;
+      document.getElementById('page-title').textContent = page.title;
+      document.getElementById('page-icon').textContent = page.icon;
+
+      // Render root tags in header
+      const rootsContainer = document.getElementById('roots-summary-container');
+      rootsContainer.innerHTML = '';
+      page.sets.forEach(s => {
+        const rootBadge = document.createElement('span');
+        rootBadge.className = 'px-2 py-0.5 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 font-serif font-black text-xs border border-amber-300 dark:border-amber-800';
+        rootBadge.textContent = s.root;
+        rootsContainer.appendChild(rootBadge);
+      });
+
+      document.getElementById('nav-prev-btn').disabled = currentPageIndex === 0;
+      document.getElementById('nav-next-btn').disabled = currentPageIndex === PAGES_DATA.length - 1;
+
+      renderWordBankSidebar();
+      renderSentenceSets();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setupEventListeners() {
+      document.getElementById('nav-prev-btn').onclick = () => {
+        if (currentPageIndex > 0) loadPage(currentPageIndex - 1);
+      };
+      document.getElementById('nav-next-btn').onclick = () => {
+        if (currentPageIndex < PAGES_DATA.length - 1) loadPage(currentPageIndex + 1);
+      };
+
+      // Font Resizer (Synchronously updates sentences AND Word Bank)
+      document.getElementById('font-increase-btn').onclick = () => {
+        if (currentFontSizeIdx < FONT_SIZES.length - 1) {
+          currentFontSizeIdx++;
+          document.getElementById('font-size-label').textContent = FONT_SIZES[currentFontSizeIdx].name;
+          renderSentenceSets();
+          renderWordBankSidebar();
+          showToast(`Font Size: ${FONT_SIZES[currentFontSizeIdx].name}`, "🔤");
+        }
+      };
+      document.getElementById('font-decrease-btn').onclick = () => {
+        if (currentFontSizeIdx > 0) {
+          currentFontSizeIdx--;
+          document.getElementById('font-size-label').textContent = FONT_SIZES[currentFontSizeIdx].name;
+          renderSentenceSets();
+          renderWordBankSidebar();
+          showToast(`Font Size: ${FONT_SIZES[currentFontSizeIdx].name}`, "🔤");
+        }
+      };
+
+      // Reveal All
+      document.getElementById('reveal-all-btn').onclick = () => {
+        const targets = getCurrentTargetWords();
+        targets.forEach(t => revealedSlots.add(t.key));
+        selectedWord = null;
+        renderWordBankSidebar();
+        renderSentenceSets();
+        showToast("All 9 slots revealed for this page!", "🌟");
+      };
+
+      // Reset
+      document.getElementById('reset-all-btn').onclick = () => {
+        const targets = getCurrentTargetWords();
+        targets.forEach(t => revealedSlots.delete(t.key));
+        selectedWord = null;
+        renderWordBankSidebar();
+        renderSentenceSets();
+        showToast("Page reset. Ready to practice again!", "🔄");
+      };
+
+      // Cancel Selection
+      document.getElementById('cancel-selection-btn').onclick = () => deselectWord();
+
+      // Theme Toggle
+      document.getElementById('theme-toggle-btn').onclick = () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('esl-morpho-theme', isDark ? 'dark' : 'light');
+        showToast(isDark ? "Deep Night Parchment Mode" : "Antique Parchment Paper Mode", isDark ? "🌙" : "📜");
+      };
+
+      // Fullscreen Toggle
+      document.getElementById('fullscreen-btn').onclick = () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      };
+
+      // Keyboard Arrow Navigation
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && currentPageIndex < PAGES_DATA.length - 1) {
+          loadPage(currentPageIndex + 1);
+        } else if (e.key === 'ArrowLeft' && currentPageIndex > 0) {
+          loadPage(currentPageIndex - 1);
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('esl-morpho-theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+
+      populateDropdown();
+      setupEventListeners();
+      document.getElementById('font-size-label').textContent = FONT_SIZES[currentFontSizeIdx].name;
+      loadPage(0);
+    });
+  </script>
+</body>
+</html>
