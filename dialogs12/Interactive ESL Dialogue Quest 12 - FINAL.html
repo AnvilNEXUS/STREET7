@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESL Dialogue Quest - Antique Parchment Edition</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Lora (Classic Literary Serif) & Plus Jakarta Sans (Clean Legible UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['Lora', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            parchment: {
+              base: '#f4eee1',       /* Warm vellum / antique background */
+              card: '#faf6ee',       /* Elevated aged parchment card */
+              cardAlt: '#ede4d3',    /* Deeper vintage parchment tint */
+              border: '#dfd3c0',     /* Muted sepia paper border */
+              borderDark: '#c4b59d', /* Darkened deckle edge border */
+              ink: '#292119',        /* Deep espresso / carbon ink text */
+              inkMuted: '#6e5d4f',   /* Aged faded ink for secondary labels */
+              accent: '#b45309',     /* Warm amber sealing wax */
+              terracotta: '#9a3412', /* Terracotta rust */
+              gold: '#d97706',       /* Antique gold */
+            },
+            nightparchment: {
+              base: '#171513',       /* Deep charcoal midnight base */
+              card: '#221e1a',       /* Smoked leather dark card */
+              cardAlt: '#2c2722',    /* Elevated panel */
+              border: '#3d352b',     /* Darkened bronze border */
+              ink: '#ece4d8',        /* Antique ivory ink */
+              inkMuted: '#9e9282',   /* Muted ivory secondary */
+              accent: '#d97706',     /* Glowing lantern amber */
+            }
+          },
+          animation: {
+            'pop': 'pop 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            'shake': 'shake 0.4s ease-in-out',
+            'warm-glow': 'warmGlow 1.8s infinite alternate ease-in-out',
+          },
+          keyframes: {
+            pop: {
+              '0%': { transform: 'scale(0.92)', opacity: '0.6' },
+              '100%': { transform: 'scale(1)', opacity: '1' }
+            },
+            shake: {
+              '0%, 100%': { transform: 'translateX(0)' },
+              '20%, 60%': { transform: 'translateX(-6px)' },
+              '40%, 80%': { transform: 'translateX(6px)' }
+            },
+            warmGlow: {
+              '0%': { boxShadow: '0 0 4px rgba(180, 83, 9, 0.2)' },
+              '100%': { boxShadow: '0 0 16px rgba(180, 83, 9, 0.6)' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Antique paper texture effect */
+    body {
+      background-color: #f4eee1;
+      background-image: 
+        radial-gradient(#e5dbca 0.75px, transparent 0.75px), 
+        radial-gradient(#dcd0bd 0.75px, #f4eee1 0.75px);
+      background-size: 32px 32px;
+      background-position: 0 0, 16px 16px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dark body {
+      background-color: #171513;
+      background-image: 
+        radial-gradient(#26221c 0.75px, transparent 0.75px), 
+        radial-gradient(#211d17 0.75px, #171513 0.75px);
+      background-size: 32px 32px;
+      background-position: 0 0, 16px 16px;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.04);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #c4b59d;
+      border-radius: 4px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #473e33;
+    }
+
+    /* Interactive Blank Capsule Slot */
+    .capsule-slot {
+      transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      vertical-align: middle;
+      user-select: none;
+    }
+    .capsule-slot:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+
+<body class="text-parchment-ink dark:text-nightparchment-ink min-h-screen flex flex-col font-sans antialiased selection:bg-amber-200 dark:selection:bg-amber-900 selection:text-amber-950 dark:selection:text-amber-100">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-parchment-card/95 dark:bg-nightparchment-card/95 backdrop-blur-md border-b border-parchment-border dark:border-nightparchment-border px-3 sm:px-5 py-2.5 shadow-sm transition-colors">
+    <div class="max-w-[1750px] mx-auto flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Dialogue Quick Selector -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-700 to-amber-900 dark:from-amber-600 dark:to-stone-900 flex items-center justify-center text-amber-100 shadow-md font-serif text-xl font-bold flex-shrink-0 border border-amber-600/40">
+          📜
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-serif font-bold text-base md:text-lg tracking-wide text-parchment-ink dark:text-nightparchment-ink hidden sm:inline">
+              ESL Dialogue Quest
+            </span>
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-parchment-cardAlt dark:bg-nightparchment-cardAlt text-amber-800 dark:text-amber-400 border border-parchment-border dark:border-nightparchment-border">
+              A2 — B1 Teens (Vietnam)
+            </span>
+          </div>
+          <!-- 12 Dialogue Select Dropdown -->
+          <div class="flex items-center gap-1.5 mt-0.5">
+            <select id="dialogue-dropdown" class="bg-parchment-base dark:bg-nightparchment-base text-parchment-ink dark:text-nightparchment-ink text-xs md:text-sm font-semibold rounded-lg px-2.5 py-1 border border-parchment-borderDark dark:border-nightparchment-border focus:outline-none focus:ring-2 focus:ring-amber-600 max-w-[220px] sm:max-w-[320px] truncate cursor-pointer shadow-inner">
+              <!-- Populated dynamically via JS -->
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dialogue Stepper -->
+      <div class="flex items-center gap-1 bg-parchment-cardAlt dark:bg-nightparchment-cardAlt p-1 rounded-xl border border-parchment-border dark:border-nightparchment-border shadow-inner">
+        <button id="nav-prev-btn" title="Previous Dialogue" class="p-1.5 md:px-2.5 md:py-1 rounded-lg bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-base dark:hover:bg-nightparchment-base text-parchment-ink dark:text-nightparchment-ink text-xs font-bold shadow-xs transition disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1 border border-parchment-border/70 dark:border-nightparchment-border">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+          <span class="hidden md:inline">Prev</span>
+        </button>
+
+        <span id="nav-page-badge" class="px-2.5 py-1 text-xs md:text-sm font-black font-serif text-amber-800 dark:text-amber-400 whitespace-nowrap min-w-[70px] text-center">
+          1 / 12
+        </span>
+
+        <button id="nav-next-btn" title="Next Dialogue" class="p-1.5 md:px-2.5 md:py-1 rounded-lg bg-amber-700 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-500 text-amber-50 text-xs font-bold shadow-xs transition disabled:opacity-30 disabled:pointer-events-none flex items-center gap-1">
+          <span class="hidden md:inline">Next</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+
+      <!-- Controls: Synchronized Font Scaler, Reveal All, Reset, Theme Toggle -->
+      <div class="flex items-center gap-2">
+        <!-- Font Scaler (Changes both sentences AND word bank) -->
+        <div class="flex items-center bg-parchment-cardAlt dark:bg-nightparchment-cardAlt p-1 rounded-xl border border-parchment-border dark:border-nightparchment-border">
+          <button id="font-decrease-btn" title="Decrease Font Size" class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-base dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink text-xs font-black transition shadow-xs border border-parchment-border/60 dark:border-nightparchment-border">
+            A-
+          </button>
+          <span id="font-size-label" class="px-2 text-[11px] md:text-xs font-bold font-serif text-amber-900 dark:text-amber-300 min-w-[70px] text-center select-none">
+            Large
+          </span>
+          <button id="font-increase-btn" title="Increase Font Size (Projector Mode)" class="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center rounded-lg bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-base dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink text-xs font-black transition shadow-xs border border-parchment-border/60 dark:border-nightparchment-border">
+            A+
+          </button>
+        </div>
+
+        <!-- Reveal All Answers -->
+        <button id="reveal-all-btn" class="px-2.5 py-1.5 rounded-xl bg-amber-800 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-600 text-amber-50 text-xs font-bold shadow-xs transition active:scale-95 flex items-center gap-1.5 border border-amber-900/40" title="Reveal all blank slots in this dialogue">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+          <span class="hidden sm:inline">Reveal All</span>
+        </button>
+
+        <!-- Reset Button -->
+        <button id="reset-all-btn" class="px-2.5 py-1.5 rounded-xl bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-cardAlt dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink text-xs font-bold border border-parchment-borderDark dark:border-nightparchment-border transition active:scale-95 flex items-center gap-1.5" title="Clear and hide answers">
+          <svg class="w-3.5 h-3.5 text-amber-700 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span class="hidden sm:inline">Reset</span>
+        </button>
+
+        <!-- Antique Paper / Night Mode Toggle -->
+        <button id="theme-toggle-btn" title="Toggle Antique Parchment / Dark Mode" class="p-2 rounded-xl bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-cardAlt dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink border border-parchment-borderDark dark:border-nightparchment-border transition shadow-xs">
+          <!-- Sun Icon for switching back to parchment light -->
+          <svg id="theme-sun-icon" class="w-4 h-4 hidden dark:block text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+          <!-- Moon Icon for dark mode -->
+          <svg id="theme-moon-icon" class="w-4 h-4 block dark:hidden text-amber-900" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        </button>
+
+        <!-- Fullscreen Toggle -->
+        <button id="fullscreen-btn" title="Toggle Fullscreen" class="p-2 rounded-xl bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-cardAlt dark:hover:bg-stone-800 text-parchment-ink dark:text-nightparchment-ink border border-parchment-borderDark dark:border-nightparchment-border transition shadow-xs">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-[1750px] w-full mx-auto p-3 sm:p-5 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+    <!-- LEFT REGION: Dialogue context header & large sentences (8 cols) -->
+    <div class="lg:col-span-8 xl:col-span-8 flex flex-col gap-4">
+      
+      <!-- Dialogue Metadata Banner -->
+      <section class="bg-parchment-card dark:bg-nightparchment-card border border-parchment-border dark:border-nightparchment-border rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-3.5">
+          <div id="dialogue-icon" class="w-12 h-12 rounded-2xl bg-parchment-cardAlt dark:bg-nightparchment-cardAlt text-amber-900 dark:text-amber-300 border border-parchment-border dark:border-nightparchment-border flex items-center justify-center text-2xl shadow-inner flex-shrink-0">
+            🧥
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="dialogue-number-label" class="text-xs font-black uppercase tracking-wider text-amber-800 dark:text-amber-400 font-serif">Dialogue 1</span>
+              <span class="text-parchment-inkMuted dark:text-nightparchment-inkMuted">•</span>
+              <span id="dialogue-topic-label" class="text-xs font-semibold text-parchment-inkMuted dark:text-nightparchment-inkMuted">Clothes, Sizing & Price Inquiry</span>
+            </div>
+            <h2 id="dialogue-title" class="text-xl sm:text-2xl font-serif font-black text-parchment-ink dark:text-nightparchment-ink tracking-tight">Shopping for a Coat</h2>
+          </div>
+        </div>
+
+        <!-- Speaker Role Tags -->
+        <div class="flex items-center gap-2 bg-parchment-cardAlt dark:bg-nightparchment-cardAlt border border-parchment-border dark:border-nightparchment-border px-3 py-1.5 rounded-xl text-xs">
+          <span class="text-parchment-inkMuted dark:text-nightparchment-inkMuted font-bold">Roles:</span>
+          <span id="role-tag-a" class="px-2.5 py-0.5 rounded font-bold bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800">
+            A: Customer
+          </span>
+          <span class="text-parchment-inkMuted dark:text-nightparchment-inkMuted font-serif italic">vs</span>
+          <span id="role-tag-b" class="px-2.5 py-0.5 rounded font-bold bg-stone-200 dark:bg-stone-800 text-stone-800 dark:text-stone-300 border border-stone-300 dark:border-stone-700">
+            B: Shop Assistant
+          </span>
+        </div>
+      </section>
+
+      <!-- Sentences Display Canvas -->
+      <section id="dialogue-lines-container" class="flex flex-col gap-3.5 pb-8">
+        <!-- Dialogue rows injected dynamically via JavaScript -->
+      </section>
+    </div>
+
+    <!-- RIGHT REGION: Sticky Word Bank Sidebar with strictly vertical stack and Vietnamese translation toggle -->
+    <aside class="lg:col-span-4 xl:col-span-4 lg:sticky lg:top-20 flex flex-col gap-4">
+      
+      <!-- Word Bank Container Card -->
+      <div class="bg-parchment-card dark:bg-nightparchment-card border border-parchment-border dark:border-nightparchment-border rounded-2xl p-4 sm:p-5 shadow-md flex flex-col gap-4">
+        
+        <!-- Header & Progress Count -->
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-1.5">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-600 dark:bg-amber-400 animate-pulse"></span>
+              <h3 class="text-sm font-serif font-black uppercase tracking-wider text-parchment-ink dark:text-nightparchment-ink">Word Bank</h3>
+            </div>
+            <span id="sidebar-progress-badge" class="text-xs font-bold px-2 py-0.5 rounded-md bg-parchment-cardAlt dark:bg-nightparchment-cardAlt text-amber-900 dark:text-amber-300 border border-parchment-border dark:border-nightparchment-border">
+              0 / 0 used
+            </span>
+          </div>
+
+          <!-- Vintage Amber Progress Bar -->
+          <div class="w-full h-2 bg-parchment-cardAlt dark:bg-nightparchment-cardAlt rounded-full overflow-hidden border border-parchment-border dark:border-nightparchment-border">
+            <div id="sidebar-progress-bar" class="h-full bg-gradient-to-r from-amber-700 to-amber-500 dark:from-amber-600 dark:to-amber-400 transition-all duration-300" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- Instructional Guidance -->
+        <p class="text-xs text-parchment-inkMuted dark:text-nightparchment-inkMuted leading-relaxed border-b border-parchment-border/70 dark:border-nightparchment-border/70 pb-3">
+          <strong class="text-parchment-ink dark:text-nightparchment-ink">Instructions:</strong> Tap a word card to prime it, then tap its blank slot in the dialogue. Tap the <strong class="text-red-600 dark:text-red-400">red star button</strong> to toggle Vietnamese translation!
+        </p>
+
+        <!-- Active Selected Word Notification -->
+        <div id="active-selected-callout" class="hidden p-3 rounded-xl bg-amber-100/90 dark:bg-amber-950/80 border border-amber-400 dark:border-amber-700 text-xs flex items-center justify-between gap-2 animate-pop shadow-xs">
+          <div class="flex items-center gap-2 truncate">
+            <span class="animate-bounce">👉</span>
+            <span class="text-parchment-ink dark:text-nightparchment-ink font-serif">Selected: <strong id="active-selected-text" class="text-amber-800 dark:text-amber-300 uppercase font-black tracking-wider text-sm font-sans"></strong></span>
+          </div>
+          <button id="cancel-selection-btn" class="text-xs font-bold text-amber-700 hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-200 underline">Cancel</button>
+        </div>
+
+        <!-- STRICTLY VERTICAL STACK FOR WORD BANK (One large vocabulary item per row) -->
+        <div class="flex flex-col gap-2.5 max-h-[64vh] overflow-y-auto pr-1" id="sidebar-vertical-stack">
+          <!-- Dynamically populated via JavaScript -->
+        </div>
+
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Interactive Feedback Toast -->
+  <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 translate-y-24 opacity-0 pointer-events-none transition-all duration-300 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl bg-parchment-ink text-parchment-card dark:bg-nightparchment-cardAlt dark:text-nightparchment-ink border border-amber-600/40 shadow-2xl text-xs md:text-sm font-semibold backdrop-blur-md">
+    <span id="toast-icon">✨</span>
+    <span id="toast-text">Feedback message</span>
+  </div>
+
+  <script>
+    const DIALOGUES_DATA = [
+      {
+        id: 1,
+        title: "Shopping for a Coat",
+        topic: "Clothes, Sizing & Price Inquiry",
+        icon: "🧥",
+        speakerA: { name: "Customer", role: "Shopper", avatar: "🛍️" },
+        speakerB: { name: "Shop Assistant", role: "Clerk", avatar: "👔" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["How much does this coat ", { word: "cost", key: "d1-w1", vietnamese: "trị giá, có giá là" }, "?"] },
+          { speaker: "B", turn: 2, segments: ["It ", { word: "costs", key: "d1-w2", vietnamese: "có giá là (số ít)" }, " $100."] },
+          { speaker: "A", turn: 3, segments: ["It’s an ", { word: "expensive", key: "d1-w3", vietnamese: "đắt tiền, đắt đỏ" }, " coat."] },
+          { speaker: "B", turn: 4, segments: ["Yes, you’re right it isn’t ", { word: "cheap", key: "d1-w4", vietnamese: "rẻ tiền, không đắt" }, "."] },
+          { speaker: "A", turn: 5, segments: ["Do you have it in ", { word: "dark", key: "d1-w5", vietnamese: "(màu) đậm, tối màu" }, " blue?"] },
+          { speaker: "B", turn: 6, segments: ["Sorry we don’t. It comes in three ", { word: "colours", key: "d1-w6", vietnamese: "màu sắc" }, " only; red, green and ", { word: "purple", key: "d1-w7", vietnamese: "màu tím" }, "."] },
+          { speaker: "A", turn: 7, segments: [{ word: "Could", key: "d1-w8", vietnamese: "Có thể (lời đề nghị lịch sự)" }, " I see the purple one please?"] },
+          { speaker: "A", turn: 8, segments: ["Do you have a bag in the ", { word: "same", key: "d1-w9", vietnamese: "cùng loại, giống như vậy" }, " colour?"] },
+          { speaker: "B", turn: 9, segments: ["No I’m sorry we don’t. We’ve got one in ", { word: "lilac", key: "d1-w10", vietnamese: "màu hoa cà (tím nhạt)" }, " though."] }
+        ]
+      },
+      {
+        id: 2,
+        title: "Ordering Boba Milk Tea",
+        topic: "Street Food, Sweetness & Ice Customization",
+        icon: "🧋",
+        speakerA: { name: "Teen Customer", role: "Student", avatar: "🎒" },
+        speakerB: { name: "Barista", role: "Boba Staff", avatar: "🥤" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Hi! I’d like to try your special roasted oolong tea in ", { word: "large", key: "d2-w1", vietnamese: "cỡ lớn (size lớn)" }, " please."] },
+          { speaker: "B", turn: 2, segments: ["Awesome! What level of ", { word: "sweetness", key: "d2-w2", vietnamese: "độ ngọt (đường)" }, " do you want: normal or fifty percent?"] },
+          { speaker: "A", turn: 3, segments: ["Fifty percent sweetness, and less ", { word: "ice", key: "d2-w3", vietnamese: "đá lạnh" }, " because it’s cool outside."] },
+          { speaker: "B", turn: 4, segments: ["Great choice. Which ", { word: "topping", key: "d2-w4", vietnamese: "thức ăn kèm / thạch thêm" }, " would you like to add today?"] },
+          { speaker: "A", turn: 5, segments: ["I will take chewy brown sugar ", { word: "pearls", key: "d2-w5", vietnamese: "hạt trân châu" }, "."] },
+          { speaker: "B", turn: 6, segments: ["Here is your order ticket and payment ", { word: "receipt", key: "d2-w6", vietnamese: "hóa đơn thanh toán" }, ". Enjoy!"] }
+        ]
+      },
+      {
+        id: 3,
+        title: "Cinema Movie Plans",
+        topic: "Entertainment, Seat Bookings & Combos",
+        icon: "🎬",
+        speakerA: { name: "Nam", role: "Friend A", avatar: "🍿" },
+        speakerB: { name: "Cinema Staff", role: "Box Office", avatar: "🎟️" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Hello! Do you still have two ", { word: "tickets", key: "d3-w1", vietnamese: "vé xem phim" }, " for the evening show?"] },
+          { speaker: "B", turn: 2, segments: ["Yes, we have seats for both the sci-fi adventure and the new teen ", { word: "comedy", key: "d3-w2", vietnamese: "phim hài hước" }, "."] },
+          { speaker: "A", turn: 3, segments: ["Let's go with the comedy. What time is the next ", { word: "screening", key: "d3-w3", vietnamese: "suất chiếu phim" }, "?"] },
+          { speaker: "B", turn: 4, segments: ["It starts in fifteen minutes. Would you like seats in ", { word: "row", key: "d3-w4", vietnamese: "hàng ghế ngồi" }, " G in the center?"] },
+          { speaker: "A", turn: 5, segments: ["Row G is perfect. Can we also order large sweet ", { word: "popcorn", key: "d3-w5", vietnamese: "bắp rang bơ" }, "?"] },
+          { speaker: "B", turn: 6, segments: ["Sure thing, our drink and snack ", { word: "combo", key: "d3-w6", vietnamese: "phần kết hợp (bắp + nước)" }, " saves you twenty percent."] }
+        ]
+      },
+      {
+        id: 4,
+        title: "Lost Item at School Library",
+        topic: "School Daily Life & Identifying Belongings",
+        icon: "🎒",
+        speakerA: { name: "Mai", role: "Student", avatar: "👧" },
+        speakerB: { name: "Librarian", role: "Library Staff", avatar: "📖" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Excuse me, I think I forgot my navy school ", { word: "backpack", key: "d4-w1", vietnamese: "ba lô đi học" }, " on a study desk."] },
+          { speaker: "B", turn: 2, segments: ["What does it look like? Did it have a metal water bottle in the outer ", { word: "pocket", key: "d4-w2", vietnamese: "ngăn túi phụ bên ngoài" }, "?"] },
+          { speaker: "A", turn: 3, segments: ["Yes, and there is a cute kitten keychain attached to the main ", { word: "zipper", key: "d4-w3", vietnamese: "dây khóa kéo chính" }, "."] },
+          { speaker: "B", turn: 4, segments: ["A classmate brought that exact bag to our help ", { word: "counter", key: "d4-w4", vietnamese: "quầy tiếp tân / hỗ trợ" }, " ten minutes ago."] },
+          { speaker: "A", turn: 5, segments: ["Oh thank goodness! I only ", { word: "noticed", key: "d4-w5", vietnamese: "đã nhận ra, để ý thấy" }, " it was missing during fourth period."] },
+          { speaker: "B", turn: 6, segments: ["Please check our ", { word: "lost-and-found", key: "d4-w6", vietnamese: "nơi lưu giữ đồ thất lạc" }, " logbook and write down your student ID."] }
+        ]
+      },
+      {
+        id: 5,
+        title: "Weekend Scooter Ride with Uncle",
+        topic: "City Travel, Sightseeing & Road Safety",
+        icon: "🛵",
+        speakerA: { name: "Khoa", role: "Nephew", avatar: "👦" },
+        speakerB: { name: "Uncle Tuấn", role: "Scooter Driver", avatar: "🏍️" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Uncle Tuấn, please make sure I strap my safety ", { word: "helmet", key: "d5-w1", vietnamese: "mũ bảo hiểm an toàn" }, " tight."] },
+          { speaker: "B", turn: 2, segments: ["All secure! Are we taking the route over the new cable-stayed ", { word: "bridge", key: "d5-w2", vietnamese: "cây cầu (cầu dây văng)" }, "?"] },
+          { speaker: "A", turn: 3, segments: ["Yes! It is much faster because the boulevard has heavy rush hour ", { word: "traffic", key: "d5-w3", vietnamese: "giao thông, xe cộ đông đúc" }, "."] },
+          { speaker: "B", turn: 4, segments: ["Look at that panoramic river ", { word: "view", key: "d5-w4", vietnamese: "quang cảnh, tầm nhìn" }, " as the city lights turn on!"] },
+          { speaker: "A", turn: 5, segments: ["This is my favorite ", { word: "scenic", key: "d5-w5", vietnamese: "cảnh sắc hữu tình, phong cảnh đẹp" }, " ride across the whole city."] },
+          { speaker: "B", turn: 6, segments: ["Hold on tight to the handles and be ", { word: "careful", key: "d5-w6", vietnamese: "cẩn thận, chú ý an toàn" }, " when I change lanes."] }
+        ]
+      },
+      {
+        id: 6,
+        title: "Ordering Street Food Bánh Mì",
+        topic: "Vietnamese Street Food & Customizations",
+        icon: "🥖",
+        speakerA: { name: "Minh", role: "Hungry Teen", avatar: "😋" },
+        speakerB: { name: "Cô Lan", role: "Cart Vendor", avatar: "👩‍🍳" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Good afternoon cô! Please prepare me one warm, ", { word: "crispy", key: "d6-w1", vietnamese: "giòn tan, giòn rụm" }, " bread roll."] },
+          { speaker: "B", turn: 2, segments: ["Of course! Shall I spread rich pork liver ", { word: "pate", key: "d6-w2", vietnamese: "pa-tê gan heo" }, " and homemade butter?"] },
+          { speaker: "A", turn: 3, segments: ["Yes please, but please don't make the chili sauce too ", { word: "spicy", key: "d6-w3", vietnamese: "cay nồng" }, " for me."] },
+          { speaker: "B", turn: 4, segments: ["Do you want plenty of fragrant green ", { word: "coriander", key: "d6-w4", vietnamese: "rau ngò (rau mùi)" }, " and pickled daikon?"] },
+          { speaker: "A", turn: 5, segments: ["Yes to herbs, but please omit the raw red ", { word: "chili", key: "d6-w5", vietnamese: "ớt tươi cắt lát" }, " slices."] },
+          { speaker: "B", turn: 6, segments: ["Got it. Would you like an ", { word: "extra", key: "d6-w6", vietnamese: "thêm, phụ thêm" }, " sunny-side fried egg inside?"] }
+        ]
+      },
+      {
+        id: 7,
+        title: "Setting Up an Online Multiplayer Game",
+        topic: "Gaming, Audio Gear & Team Co-op",
+        icon: "🎮",
+        speakerA: { name: "Duy", role: "Gamer 1", avatar: "🎧" },
+        speakerB: { name: "Huy", role: "Gamer 2", avatar: "🕹️" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Can you hear my microphone clearly through this new gaming ", { word: "headset", key: "d7-w1", vietnamese: "tai nghe có micro chơi game" }, "?"] },
+          { speaker: "B", turn: 2, segments: ["Crystal clear! Hop into our voice channel on ", { word: "discord", key: "d7-w2", vietnamese: "ứng dụng chat Discord" }, " right away."] },
+          { speaker: "A", turn: 3, segments: ["I’m logged in. Could you send me an in-game lobby ", { word: "invite", key: "d7-w3", vietnamese: "lời mời vào phòng chơi" }, "?"] },
+          { speaker: "B", turn: 4, segments: ["Just sent it! That will assemble our full four-player ", { word: "party", key: "d7-w4", vietnamese: "nhóm đồng đội (trong game)" }, "."] },
+          { speaker: "A", turn: 5, segments: ["Let me restart my router so my internet ", { word: "connection", key: "d7-w5", vietnamese: "kết nối mạng Internet" }, " stays stable."] },
+          { speaker: "B", turn: 6, segments: ["Good idea. This survival boss requires high-level ", { word: "co-op", key: "d7-w6", vietnamese: "phối hợp đồng đội (co-op)" }, " strategy."] }
+        ]
+      },
+      {
+        id: 8,
+        title: "Asking Directions in City Center",
+        topic: "Urban Navigation & Spatial Prepositions",
+        icon: "🗺️",
+        speakerA: { name: "Visitor", role: "Tourist", avatar: "🧭" },
+        speakerB: { name: "Local Teen", role: "City Guide", avatar: "🚲" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Pardon me, how do I get to the central book street?"] },
+          { speaker: "B", turn: 2, segments: ["Cross over at that zebra ", { word: "pedestrian", key: "d8-w1", vietnamese: "vạch kẻ cho người đi bộ" }, " stripe first."] },
+          { speaker: "A", turn: 3, segments: ["Do I walk around the large traffic ", { word: "roundabout", key: "d8-w2", vietnamese: "bùng binh, vòng xoay giao thông" }, " with the fountain?"] },
+          { speaker: "B", turn: 4, segments: ["Yes, and continue straight through the four-way ", { word: "intersection", key: "d8-w3", vietnamese: "ngã tư, giao lộ 4 ngả" }, "."] },
+          { speaker: "A", turn: 5, segments: ["Should I keep walking ", { word: "straight", key: "d8-w4", vietnamese: "đi thẳng tiếp" }, " along the shaded sidewalk?"] },
+          { speaker: "B", turn: 6, segments: ["Keep going until you spot the bookstore on the street ", { word: "corner", key: "d8-w5", vietnamese: "góc phố, khúc cua" }, ", directly ", { word: "opposite", key: "d8-w6", vietnamese: "đối diện trực tiếp với" }, " the post office."] }
+        ]
+      },
+      {
+        id: 9,
+        title: "Missing Project Deadline with Teacher",
+        topic: "School Communication & Project Deliverables",
+        icon: "📑",
+        speakerA: { name: "Trang", role: "Group Leader", avatar: "👩‍🎓" },
+        speakerB: { name: "Mr. David", role: "English Teacher", avatar: "👨‍🏫" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Teacher David, could our presentation group request a short deadline ", { word: "extension", key: "d9-w1", vietnamese: "sự gia hạn thêm thời gian" }, "?"] },
+          { speaker: "B", turn: 2, segments: ["Why weren't you able to ", { word: "submit", key: "d9-w2", vietnamese: "nộp (bài thuyết trình)" }, " your slides before class began?"] },
+          { speaker: "A", turn: 3, segments: ["The campus lab ", { word: "printer", key: "d9-w3", vietnamese: "máy in tài liệu" }, " broke down while we were printing posters."] },
+          { speaker: "B", turn: 4, segments: ["Did your team finish reviewing the final research ", { word: "draft", key: "d9-w4", vietnamese: "bản thảo nháp cuối cùng" }, "?"] },
+          { speaker: "A", turn: 5, segments: ["Yes, and we backed up all our digital files on a USB ", { word: "memory", key: "d9-w5", vietnamese: "bộ nhớ (thẻ nhớ USB)" }, " stick."] },
+          { speaker: "B", turn: 6, segments: ["Alright, you may deliver your final report this ", { word: "Friday", key: "d9-w6", vietnamese: "thứ Sáu tuần này" }, " before noon."] }
+        ]
+      },
+      {
+        id: 10,
+        title: "Choosing a Birthday Gift for a Best Friend",
+        topic: "Gift Shopping, Budgeting & Wrapping",
+        icon: "🎁",
+        speakerA: { name: "Bảo", role: "Classmate 1", avatar: "🧢" },
+        speakerB: { name: "Châu", role: "Classmate 2", avatar: "🎀" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Linh’s surprise party is on Saturday. What is our spending ", { word: "budget", key: "d10-w1", vietnamese: "ngân sách dự chi" }, "?"] },
+          { speaker: "B", turn: 2, segments: ["We gathered three hundred thousand dong altogether."] },
+          { speaker: "A", turn: 3, segments: ["How about buying these stylish over-ear ", { word: "headphones", key: "d10-w2", vietnamese: "tai nghe chụp tai" }, "?"] },
+          { speaker: "B", turn: 4, segments: ["That is a wonderful ", { word: "choice", key: "d10-w3", vietnamese: "sự lựa chọn tuyệt vời" }, "! Or perhaps an art supply gift ", { word: "voucher", key: "d10-w4", vietnamese: "phiếu mua hàng quà tặng" }, "?"] },
+          { speaker: "A", turn: 5, segments: ["The headphones are ideal! Let's ask the counter staff to have them gift-", { word: "wrapped", key: "d10-w5", vietnamese: "được gói quà cẩn thận" }, "."] },
+          { speaker: "B", turn: 6, segments: ["Awesome, bring the package over to the front ", { word: "cashier", key: "d10-w6", vietnamese: "nhân viên thu ngân" }, " to checkout."] }
+        ]
+      },
+      {
+        id: 11,
+        title: "School Cultural Festival Booth",
+        topic: "School Events, Booth Setup & Teamwork",
+        icon: "🎪",
+        speakerA: { name: "Hoàng", role: "Booth Lead", avatar: "🚩" },
+        speakerB: { name: "Ngân", role: "Club Secretary", avatar: "🎨" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Where should we hang our giant welcome ", { word: "banner", key: "d11-w1", vietnamese: "băng-rôn, biểu ngữ lớn" }, "?"] },
+          { speaker: "B", turn: 2, segments: ["Fasten it right above the main festival ", { word: "entrance", key: "d11-w2", vietnamese: "cổng lối vào chính" }, "."] },
+          { speaker: "A", turn: 3, segments: ["Should we string up these handmade paper ", { word: "decorations", key: "d11-w3", vietnamese: "đồ trang trí thủ công" }, " around the game tent?"] },
+          { speaker: "B", turn: 4, segments: ["Yes, and check how many club ", { word: "volunteers", key: "d11-w4", vietnamese: "những bạn tình nguyện viên" }, " signed up for afternoon shifts."] },
+          { speaker: "A", turn: 5, segments: ["We have six students running the trivia wheel and handing out ", { word: "raffle", key: "d11-w5", vietnamese: "vé bốc thăm trúng thưởng" }, " tickets."] },
+          { speaker: "B", turn: 6, segments: ["Make sure everyone inspects the master stage ", { word: "schedule", key: "d11-w6", vietnamese: "lịch trình thời gian sân khấu" }, " before opening."] }
+        ]
+      },
+      {
+        id: 12,
+        title: "Visiting the Teen Health Clinic",
+        topic: "Minor Ailments, Clinic Visit & Doctor Advice",
+        icon: "🩺",
+        speakerA: { name: "Phúc", role: "Patient", avatar: "🤒" },
+        speakerB: { name: "Dr. Mai", role: "Doctor", avatar: "👩‍⚕️" },
+        lines: [
+          { speaker: "A", turn: 1, segments: ["Good morning doctor, I woke up with a pounding ", { word: "headache", key: "d12-w1", vietnamese: "cơn đau nhức đầu dữ dội" }, " and feel fatigued."] },
+          { speaker: "B", turn: 2, segments: ["Let's check your oral ", { word: "temperature", key: "d12-w2", vietnamese: "thân nhiệt, nhiệt độ cơ thể" }, " to see if there is a fever."] },
+          { speaker: "A", turn: 3, segments: ["My throat feels scratchy and painful when I swallow."] },
+          { speaker: "B", turn: 4, segments: ["Those are common seasonal ", { word: "symptoms", key: "d12-w3", vietnamese: "các triệu chứng của bệnh" }, " of a viral throat infection."] },
+          { speaker: "A", turn: 5, segments: ["Will I need antibiotics, or can you provide a mild medicine ", { word: "prescription", key: "d12-w4", vietnamese: "đơn thuốc, toa thuốc" }, "?"] },
+          { speaker: "B", turn: 6, segments: ["Just vitamins and soothing syrup. For a rapid ", { word: "recovery", key: "d12-w5", vietnamese: "sự bình phục sức khỏe" }, ", drink ", { word: "plenty", key: "d12-w6", vietnamese: "rất nhiều, lượng dồi dào" }, " of warm water."] }
+        ]
+      }
+    ];
+
+    let currentDialogueIndex = 0;
+    let selectedWord = null; // { word: string, key: string, vietnamese: string }
+    let revealedSlots = new Set(); // Set of revealed slot keys
+    let visibleTranslations = new Set(); // Set of word keys whose Vietnamese translation is shown
+
+    // Unified Font Scaling tiers for BOTH sentences AND the word bank sidebar
+    const FONT_SIZES = [
+      { 
+        name: "Regular", 
+        sentenceClass: "text-lg md:text-xl", 
+        capsuleClass: "text-base md:text-lg min-w-[95px] px-3.5 py-1",
+        wordTitleClass: "text-base md:text-lg",
+        starBtnClass: "w-7 h-7",
+        starSvgClass: "w-3.5 h-3.5",
+        badgeClass: "w-6 h-6 text-xs"
+      },
+      { 
+        name: "Large", 
+        sentenceClass: "text-xl md:text-2xl", 
+        capsuleClass: "text-lg md:text-xl min-w-[120px] px-4 py-1.5",
+        wordTitleClass: "text-lg md:text-xl",
+        starBtnClass: "w-8 h-8",
+        starSvgClass: "w-4 h-4",
+        badgeClass: "w-7 h-7 text-sm"
+      },
+      { 
+        name: "XL Projector", 
+        sentenceClass: "text-2xl md:text-3xl", 
+        capsuleClass: "text-xl md:text-2xl min-w-[145px] px-5 py-2",
+        wordTitleClass: "text-xl md:text-2xl",
+        starBtnClass: "w-9 h-9",
+        starSvgClass: "w-5 h-5",
+        badgeClass: "w-8 h-8 text-base"
+      },
+      { 
+        name: "Huge", 
+        sentenceClass: "text-3xl md:text-4xl", 
+        capsuleClass: "text-2xl md:text-3xl min-w-[170px] px-6 py-2.5",
+        wordTitleClass: "text-2xl md:text-3xl",
+        starBtnClass: "w-10 h-10",
+        starSvgClass: "w-6 h-6",
+        badgeClass: "w-9 h-9 text-lg"
+      }
+    ];
+    let currentFontSizeIdx = 1; // Default to 'Large' for high classroom visibility
+
+    function showToast(message, icon = "✨") {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-text').textContent = message;
+      document.getElementById('toast-icon').textContent = icon;
+      toast.classList.remove('opacity-0', 'translate-y-24', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-24', 'pointer-events-none');
+      }, 2000);
+    }
+
+    function getCurrentTargetWords() {
+      const current = DIALOGUES_DATA[currentDialogueIndex];
+      const list = [];
+      current.lines.forEach(line => {
+        line.segments.forEach(seg => {
+          if (typeof seg === 'object' && seg.word) {
+            list.push({ word: seg.word, key: seg.key, vietnamese: seg.vietnamese || "" });
+          }
+        });
+      });
+      return list;
+    }
+
+    function populateDropdown() {
+      const select = document.getElementById('dialogue-dropdown');
+      select.innerHTML = '';
+      DIALOGUES_DATA.forEach((dlg, idx) => {
+        const opt = document.createElement('option');
+        opt.value = idx;
+        opt.textContent = `${dlg.id}. ${dlg.title}`;
+        select.appendChild(opt);
+      });
+      select.onchange = (e) => loadDialogue(parseInt(e.target.value, 10));
+    }
+
+    function renderWordBankSidebar() {
+      const container = document.getElementById('sidebar-vertical-stack');
+      container.innerHTML = '';
+      const targets = getCurrentTargetWords();
+      const fontTier = FONT_SIZES[currentFontSizeIdx];
+
+      // Sort alphabetically for effortless scanning
+      const sortedWords = [...targets].sort((a, b) => a.word.localeCompare(b.word));
+      let placedCount = 0;
+
+      sortedWords.forEach((item, index) => {
+        const isRevealed = revealedSlots.has(item.key);
+        if (isRevealed) placedCount++;
+
+        const isSelected = selectedWord && selectedWord.key === item.key;
+        const isTranslationVisible = visibleTranslations.has(item.key);
+
+        // Word card container
+        const cardDiv = document.createElement('div');
+        cardDiv.className = `w-full p-3 sm:p-3.5 rounded-2xl border transition-all duration-200 flex flex-col gap-2 shadow-xs cursor-pointer select-none ${
+          isRevealed
+            ? 'bg-parchment-cardAlt/50 dark:bg-nightparchment-cardAlt/40 border-parchment-border/60 dark:border-nightparchment-border/60 text-parchment-inkMuted dark:text-nightparchment-inkMuted opacity-60'
+            : isSelected
+              ? 'bg-amber-100/90 dark:bg-amber-950/80 border-amber-600 dark:border-amber-500 ring-2 ring-amber-500 scale-[1.01] shadow-md animate-warm-glow'
+              : 'bg-parchment-card dark:bg-nightparchment-card hover:bg-parchment-cardAlt dark:hover:bg-stone-800 border-parchment-borderDark dark:border-nightparchment-border active:scale-99 text-parchment-ink dark:text-nightparchment-ink'
+        }`;
+
+        // Main row: Index Badge + Large Scalable Word + Red Circle Yellow Star Button
+        const topRow = document.createElement('div');
+        topRow.className = 'flex items-center justify-between gap-3 w-full';
+
+        // Left side: number badge and vocabulary text
+        const leftWrap = document.createElement('div');
+        leftWrap.className = 'flex items-center gap-3 truncate';
+
+        const indexBadge = document.createElement('span');
+        indexBadge.className = `${fontTier.badgeClass} rounded-xl font-serif font-black flex items-center justify-center flex-shrink-0 ${
+          isRevealed 
+            ? 'bg-stone-300 dark:bg-stone-800 text-stone-600 dark:text-stone-400' 
+            : isSelected
+              ? 'bg-amber-700 text-amber-50 font-bold'
+              : 'bg-parchment-cardAlt dark:bg-nightparchment-cardAlt text-amber-900 dark:text-amber-400 border border-parchment-border dark:border-nightparchment-border'
+        }`;
+        indexBadge.textContent = index + 1;
+
+        const wordText = document.createElement('span');
+        wordText.className = `font-black tracking-wide ${fontTier.wordTitleClass} ${isRevealed ? 'line-through' : ''}`;
+        wordText.textContent = item.word;
+
+        leftWrap.appendChild(indexBadge);
+        leftWrap.appendChild(wordText);
+
+        // Right side: Red Circle Yellow Star Vietnamese Button + Status/Used badge
+        const rightWrap = document.createElement('div');
+        rightWrap.className = 'flex items-center gap-2 flex-shrink-0';
+
+        // Red Circle with Yellow Star Button (Vietnamese flag badge style)
+        const starBtn = document.createElement('button');
+        starBtn.type = 'button';
+        starBtn.className = `${fontTier.starBtnClass} rounded-full bg-red-600 hover:bg-red-500 active:scale-95 flex items-center justify-center text-yellow-300 shadow-sm border border-red-700/60 dark:border-red-400/40 flex-shrink-0 transition-transform cursor-pointer ${
+          isTranslationVisible ? 'ring-2 ring-yellow-400 ring-offset-1' : ''
+        }`;
+        starBtn.title = isTranslationVisible ? "Ẩn nghĩa tiếng Việt" : "Hiện nghĩa tiếng Việt (Vietnamese translation)";
+        starBtn.innerHTML = `
+          <svg class="${fontTier.starSvgClass} fill-current text-yellow-300 drop-shadow-xs" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        `;
+
+        // Stop propagation so clicking the star toggles translation without selecting word card
+        starBtn.onclick = (e) => {
+          e.stopPropagation();
+          toggleVietnameseTranslation(item.key, item.vietnamese);
+        };
+
+        rightWrap.appendChild(starBtn);
+
+        // Show status or used checkmark
+        if (isRevealed) {
+          const usedTag = document.createElement('span');
+          usedTag.className = 'inline-flex items-center gap-1 text-[11px] font-bold text-stone-600 dark:text-stone-400';
+          usedTag.innerHTML = `<svg class="w-4 h-4 text-emerald-700 dark:text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>`;
+          rightWrap.appendChild(usedTag);
+        } else if (isSelected) {
+          const readyTag = document.createElement('span');
+          readyTag.className = 'text-xs font-black text-amber-800 dark:text-amber-300 animate-pulse';
+          readyTag.textContent = 'Ready ✦';
+          rightWrap.appendChild(readyTag);
+        }
+
+        topRow.appendChild(leftWrap);
+        topRow.appendChild(rightWrap);
+        cardDiv.appendChild(topRow);
+
+        // Vietnamese Translation Display (Shown when star button is active)
+        if (isTranslationVisible && item.vietnamese) {
+          const transDiv = document.createElement('div');
+          transDiv.className = 'mt-1 px-3 py-1.5 rounded-xl bg-amber-100/90 dark:bg-amber-950/80 border border-amber-300 dark:border-amber-800/70 text-amber-950 dark:text-amber-200 text-xs md:text-sm font-sans font-semibold flex items-center gap-2 animate-pop';
+          transDiv.innerHTML = `
+            <span class="text-base">🇻🇳</span>
+            <span class="italic tracking-wide">${item.vietnamese}</span>
+          `;
+          cardDiv.appendChild(transDiv);
+        }
+
+        // Card Click Handler (Select / Deselect for placement)
+        if (!isRevealed) {
+          cardDiv.onclick = () => {
+            if (selectedWord && selectedWord.key === item.key) {
+              deselectWord();
+            } else {
+              selectWord(item);
+            }
+          };
+        }
+
+        container.appendChild(cardDiv);
+      });
+
+      // Update progress badges
+      document.getElementById('sidebar-progress-badge').textContent = `${placedCount} / ${targets.length} used`;
+      const pct = targets.length > 0 ? (placedCount / targets.length) * 100 : 0;
+      document.getElementById('sidebar-progress-bar').style.width = `${pct}%`;
+
+      // Update active selection callout
+      const callout = document.getElementById('active-selected-callout');
+      const activeText = document.getElementById('active-selected-text');
+      if (selectedWord) {
+        callout.classList.remove('hidden');
+        activeText.textContent = selectedWord.word;
+      } else {
+        callout.classList.add('hidden');
+      }
+    }
+
+    function toggleVietnameseTranslation(key, vietnameseText) {
+      if (visibleTranslations.has(key)) {
+        visibleTranslations.delete(key);
+      } else {
+        visibleTranslations.add(key);
+        if (vietnameseText) {
+          showToast(`🇻🇳 ${vietnameseText}`, "⭐");
+        }
+      }
+      renderWordBankSidebar();
+    }
+
+    function selectWord(item) {
+      selectedWord = item;
+      renderWordBankSidebar();
+      showToast(`Selected "${item.word}". Tap the blank slot in the dialogue!`, "🎯");
+    }
+
+    function deselectWord() {
+      selectedWord = null;
+      renderWordBankSidebar();
+    }
+
+    function renderDialogueLines() {
+      const container = document.getElementById('dialogue-lines-container');
+      container.innerHTML = '';
+      const dlg = DIALOGUES_DATA[currentDialogueIndex];
+      const fontTier = FONT_SIZES[currentFontSizeIdx];
+
+      dlg.lines.forEach((line) => {
+        const isSpeakerA = line.speaker === "A";
+        const speakerConfig = isSpeakerA ? dlg.speakerA : dlg.speakerB;
+
+        const rowCard = document.createElement('div');
+        rowCard.className = `p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex flex-col sm:flex-row items-start gap-3.5 sm:gap-4 ${
+          isSpeakerA
+            ? 'bg-parchment-card dark:bg-nightparchment-card border-parchment-border dark:border-nightparchment-border shadow-xs hover:border-amber-600/50'
+            : 'bg-parchment-cardAlt/60 dark:bg-nightparchment-cardAlt/50 border-parchment-border dark:border-nightparchment-border shadow-xs hover:border-stone-500/50'
+        }`;
+
+        // Speaker Avatar & Turn Badge
+        const speakerWrap = document.createElement('div');
+        speakerWrap.className = 'flex items-center gap-2 flex-shrink-0';
+
+        const avatarBadge = document.createElement('div');
+        avatarBadge.className = `w-10 h-10 md:w-11 md:h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0 shadow-xs border ${
+          isSpeakerA
+            ? 'bg-amber-100 dark:bg-amber-950/70 border-amber-300 dark:border-amber-800'
+            : 'bg-stone-200 dark:bg-stone-800 border-stone-300 dark:border-stone-700'
+        }`;
+        avatarBadge.textContent = speakerConfig.avatar;
+        avatarBadge.title = `${speakerConfig.name} (${speakerConfig.role})`;
+
+        const turnIndicator = document.createElement('span');
+        turnIndicator.className = `text-xs font-serif font-black px-2 py-0.5 rounded-md ${
+          isSpeakerA
+            ? 'bg-amber-200/80 dark:bg-amber-900/60 text-amber-900 dark:text-amber-200'
+            : 'bg-stone-300/80 dark:bg-stone-700/60 text-stone-900 dark:text-stone-200'
+        }`;
+        turnIndicator.textContent = `${line.speaker}${line.turn}`;
+
+        speakerWrap.appendChild(avatarBadge);
+        speakerWrap.appendChild(turnIndicator);
+
+        // Speech Text container scaling dynamically with fontTier
+        const speechWrap = document.createElement('div');
+        speechWrap.className = `flex-1 ${fontTier.sentenceClass} leading-loose flex flex-wrap items-center gap-x-2 gap-y-3 font-serif text-parchment-ink dark:text-nightparchment-ink`;
+
+        line.segments.forEach(seg => {
+          if (typeof seg === 'string') {
+            const spanText = document.createElement('span');
+            spanText.textContent = seg;
+            speechWrap.appendChild(spanText);
+          } else {
+            // Interactive Capsule Card Slot
+            const capsule = document.createElement('button');
+            capsule.type = 'button';
+            const isRevealed = revealedSlots.has(seg.key);
+            capsule.dataset.key = seg.key;
+            capsule.dataset.word = seg.word;
+
+            if (isRevealed) {
+              capsule.className = `capsule-slot ${fontTier.capsuleClass} rounded-full font-bold font-sans shadow-sm animate-pop ${
+                isSpeakerA
+                  ? 'bg-amber-700 text-amber-50 border-2 border-amber-600 dark:bg-amber-600 dark:border-amber-400'
+                  : 'bg-stone-700 text-stone-50 border-2 border-stone-600 dark:bg-stone-700 dark:border-stone-500'
+              }`;
+              capsule.innerHTML = `<span>${seg.word}</span>`;
+              capsule.title = `Click to hide "${seg.word}"`;
+            } else {
+              // Unrevealed blank slot
+              capsule.className = `capsule-slot ${fontTier.capsuleClass} rounded-full border-2 border-dashed border-amber-700/60 dark:border-amber-500/60 bg-amber-100/50 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 font-mono tracking-widest cursor-pointer shadow-inner hover:bg-amber-200/50 dark:hover:bg-amber-900/40`;
+              capsule.innerHTML = `<span>? ? ?</span>`;
+              capsule.title = `Tap with selected word or click directly to reveal!`;
+            }
+
+            capsule.onclick = (e) => {
+              e.stopPropagation();
+              handleCapsuleClick(seg.key, seg.word, capsule);
+            };
+
+            speechWrap.appendChild(capsule);
+          }
+        });
+
+        rowCard.appendChild(speakerWrap);
+        rowCard.appendChild(speechWrap);
+        container.appendChild(rowCard);
+      });
+    }
+
+    function handleCapsuleClick(key, word, capsuleElement) {
+      // 1. If a word is selected from the sidebar
+      if (selectedWord) {
+        if (selectedWord.key === key || selectedWord.word.toLowerCase() === word.toLowerCase()) {
+          revealedSlots.add(key);
+          showToast(`Correct! "${word}" placed.`, "🎉");
+          selectedWord = null;
+          renderWordBankSidebar();
+          renderDialogueLines();
+        } else {
+          // Shake on mismatch
+          capsuleElement.classList.add('animate-shake');
+          setTimeout(() => capsuleElement.classList.remove('animate-shake'), 450);
+          showToast(`Try again! "${selectedWord.word}" does not fit here.`, "🤔");
+        }
+        return;
+      }
+
+      // 2. Direct click without a prior selection: Teacher toggle reveal mode
+      if (revealedSlots.has(key)) {
+        revealedSlots.delete(key);
+        showToast(`Slot hidden again.`, "🔄");
+      } else {
+        revealedSlots.add(key);
+        showToast(`Revealed: "${word}"`, "✨");
+      }
+      renderWordBankSidebar();
+      renderDialogueLines();
+    }
+
+    function loadDialogue(index) {
+      currentDialogueIndex = index;
+      selectedWord = null;
+      visibleTranslations.clear(); // Reset translation toggles on dialogue change
+
+      const dlg = DIALOGUES_DATA[currentDialogueIndex];
+
+      // Update Header Metadata
+      document.getElementById('dialogue-dropdown').value = index;
+      document.getElementById('nav-page-badge').textContent = `${dlg.id} / ${DIALOGUES_DATA.length}`;
+      document.getElementById('dialogue-number-label').textContent = `Dialogue ${dlg.id}`;
+      document.getElementById('dialogue-topic-label').textContent = dlg.topic;
+      document.getElementById('dialogue-title').textContent = dlg.title;
+      document.getElementById('dialogue-icon').textContent = dlg.icon;
+
+      // Update Roles
+      document.getElementById('role-tag-a').textContent = `A: ${dlg.speakerA.name} (${dlg.speakerA.role})`;
+      document.getElementById('role-tag-b').textContent = `B: ${dlg.speakerB.name} (${dlg.speakerB.role})`;
+
+      // Update Nav Buttons
+      document.getElementById('nav-prev-btn').disabled = currentDialogueIndex === 0;
+      document.getElementById('nav-next-btn').disabled = currentDialogueIndex === DIALOGUES_DATA.length - 1;
+
+      renderWordBankSidebar();
+      renderDialogueLines();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setupEventListeners() {
+      // Prev / Next Buttons
+      document.getElementById('nav-prev-btn').onclick = () => {
+        if (currentDialogueIndex > 0) loadDialogue(currentDialogueIndex - 1);
+      };
+      document.getElementById('nav-next-btn').onclick = () => {
+        if (currentDialogueIndex < DIALOGUES_DATA.length - 1) loadDialogue(currentDialogueIndex + 1);
+      };
+
+      // Font Resizer Buttons (Scales BOTH sentences and Word Bank sidebar)
+      document.getElementById('font-increase-btn').onclick = () => {
+        if (currentFontSizeIdx < FONT_SIZES.length - 1) {
+          currentFontSizeIdx++;
+          document.getElementById('font-size-label').textContent = FONT_SIZES[currentFontSizeIdx].name;
+          renderDialogueLines();
+          renderWordBankSidebar();
+          showToast(`Font Size: ${FONT_SIZES[currentFontSizeIdx].name}`, "🔤");
+        }
+      };
+      document.getElementById('font-decrease-btn').onclick = () => {
+        if (currentFontSizeIdx > 0) {
+          currentFontSizeIdx--;
+          document.getElementById('font-size-label').textContent = FONT_SIZES[currentFontSizeIdx].name;
+          renderDialogueLines();
+          renderWordBankSidebar();
+          showToast(`Font Size: ${FONT_SIZES[currentFontSizeIdx].name}`, "🔤");
+        }
+      };
+
+      // Reveal All Button
+      document.getElementById('reveal-all-btn').onclick = () => {
+        const targets = getCurrentTargetWords();
+        targets.forEach(t => revealedSlots.add(t.key));
+        selectedWord = null;
+        renderWordBankSidebar();
+        renderDialogueLines();
+        showToast("All slots revealed for this dialogue!", "🌟");
+      };
+
+      // Reset Button
+      document.getElementById('reset-all-btn').onclick = () => {
+        const targets = getCurrentTargetWords();
+        targets.forEach(t => revealedSlots.delete(t.key));
+        selectedWord = null;
+        renderWordBankSidebar();
+        renderDialogueLines();
+        showToast("Dialogue reset. Ready to practice again!", "🔄");
+      };
+
+      // Cancel Selection Button
+      document.getElementById('cancel-selection-btn').onclick = () => deselectWord();
+
+      // Theme Toggle (Antique Parchment Light <-> Deep Night Parchment)
+      document.getElementById('theme-toggle-btn').onclick = () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        localStorage.setItem('esl-parchment-theme', isDark ? 'dark' : 'light');
+        showToast(isDark ? "Deep Night Parchment Mode" : "Antique Parchment Paper Mode", isDark ? "🌙" : "📜");
+      };
+
+      // Fullscreen Toggle
+      document.getElementById('fullscreen-btn').onclick = () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      };
+
+      // Keyboard Arrow Navigation
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' && currentDialogueIndex < DIALOGUES_DATA.length - 1) {
+          loadDialogue(currentDialogueIndex + 1);
+        } else if (e.key === 'ArrowLeft' && currentDialogueIndex > 0) {
+          loadDialogue(currentDialogueIndex - 1);
+        }
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Restore theme preference
+      const savedTheme = localStorage.getItem('esl-parchment-theme');
+      if (savedTheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+
+      populateDropdown();
+      setupEventListeners();
+      document.getElementById('font-size-label').textContent = FONT_SIZES[currentFontSizeIdx].name;
+      loadDialogue(0); // Load Dialogue 1: Shopping for a Coat
+    });
+  </script>
+</body>
+</html>
