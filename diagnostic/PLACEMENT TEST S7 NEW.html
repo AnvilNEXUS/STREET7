@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Placement Test - Interactive Classroom Activity</title>
+  <style>
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --correct-bg: #dcfce7;
+      --correct-border: #16a34a;
+      --correct-text: #14532d;
+      --distractor-bg: #fef3c7;
+      --distractor-border: #d97706;
+      --distractor-text: #78350f;
+      --highlight-token: #fde047;
+      /* Dynamic Master Scale */
+      --question-size: 2.4rem;
+      --answer-size: calc(var(--question-size) * 0.78);
+      --example-size: calc(var(--question-size) * 0.76);
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+      --shadow-md: 0 10px 28px rgba(0,0,0,0.08);
+      --transition: all 0.22s ease;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0b0f19;
+      --bg-card: #161e2e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --primary-color: #3b82f6;
+      --primary-hover: #60a5fa;
+      --correct-bg: #064e3b;
+      --correct-border: #10b981;
+      --correct-text: #ecfdf5;
+      --distractor-bg: #451a03;
+      --distractor-border: #f59e0b;
+      --distractor-text: #fffbeb;
+      --highlight-token: #eab308;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.3);
+      --shadow-md: 0 10px 28px rgba(0,0,0,0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Top Control Bar */
+    header {
+      background: var(--bg-card);
+      border-bottom: 2px solid var(--border-color);
+      padding: 0.85rem 1.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-left, .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .badge-qno {
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--primary-color);
+      letter-spacing: 0.5px;
+    }
+
+    .badge-cefr {
+      background: var(--primary-color);
+      color: #fff;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .control-group input[type="range"] {
+      width: 130px;
+      cursor: pointer;
+    }
+
+    select, button {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1.5px solid var(--border-color);
+      padding: 0.55rem 0.95rem;
+      border-radius: 9px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    select:focus, button:focus {
+      outline: 2px solid var(--primary-color);
+    }
+
+    button:hover {
+      border-color: var(--primary-color);
+      background: rgba(37, 99, 235, 0.06);
+    }
+
+    /* Main Slide Stage */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 2.2rem 1.5rem;
+      max-width: 1240px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .card-stage {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: 24px;
+      padding: 3rem 2.8rem;
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2.4rem;
+      transition: var(--transition);
+    }
+
+    /* Sentence Display */
+    .sentence-container {
+      font-size: var(--question-size);
+      line-height: 1.6;
+      font-weight: 700;
+      text-align: center;
+      color: var(--text-main);
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.4rem 0.7rem;
+    }
+
+    .blank-slot {
+      display: inline-block;
+      min-width: 3.5em;
+      padding: 0.1rem 0.8em;
+      border-bottom: 5px solid var(--primary-color);
+      color: var(--text-muted);
+      text-align: center;
+      transition: var(--transition);
+      border-radius: 6px 6px 0 0;
+    }
+
+    .blank-slot.correct-filled {
+      border-bottom: 5px solid var(--correct-border);
+      background-color: var(--correct-bg);
+      color: var(--correct-text);
+      border-radius: 10px;
+      padding: 0.2rem 1em;
+      animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 4px 16px rgba(22, 163, 74, 0.28);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Responsive Option Grid & Buttons */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.4rem;
+      width: 100%;
+    }
+
+    @media (max-width: 768px) {
+      .options-grid {
+        grid-template-columns: 1fr;
+      }
+      .card-stage {
+        padding: 2rem 1.4rem;
+      }
+    }
+
+    .option-btn {
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.1em 1.4em;
+      font-size: var(--answer-size);
+      font-weight: 700;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 1em;
+      transition: var(--transition);
+      text-align: left;
+      line-height: 1.35;
+    }
+
+    .option-btn:hover {
+      border-color: var(--primary-color);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .option-badge {
+      width: 1.8em;
+      height: 1.8em;
+      border-radius: 10px;
+      background: var(--border-color);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85em;
+      font-weight: 800;
+      flex-shrink: 0;
+      transition: var(--transition);
+    }
+
+    /* Option States */
+    .option-btn.state-correct {
+      background: var(--correct-bg);
+      border-color: var(--correct-border);
+      color: var(--correct-text);
+      box-shadow: 0 0 0 2px var(--correct-border);
+    }
+    .option-btn.state-correct .option-badge {
+      background: var(--correct-border);
+      color: #fff;
+    }
+
+    .option-btn.state-distractor {
+      border-color: var(--distractor-border);
+      background: rgba(217, 119, 6, 0.08);
+      box-shadow: 0 0 0 2px var(--distractor-border);
+    }
+    .option-btn.state-distractor .option-badge {
+      background: var(--distractor-border);
+      color: #fff;
+    }
+
+    /* Responsive Example & Feedback Box */
+    .feedback-box {
+      border-radius: 16px;
+      padding: 1.3em 1.6em;
+      font-size: var(--example-size);
+      line-height: 1.65;
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feedback-box.show-distractor {
+      display: block;
+      background: var(--distractor-bg);
+      border: 2px solid var(--distractor-border);
+      color: var(--distractor-text);
+    }
+
+    .feedback-box.show-correct {
+      display: block;
+      background: var(--correct-bg);
+      border: 2px solid var(--correct-border);
+      color: var(--correct-text);
+    }
+
+    .feedback-box mark {
+      background: var(--highlight-token);
+      color: #000;
+      font-weight: 800;
+      padding: 0.15em 0.4em;
+      border-radius: 5px;
+    }
+
+    .feedback-title {
+      font-weight: 900;
+      margin-bottom: 0.45em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.08em;
+    }
+
+    /* Bottom Navigation Bar */
+    footer {
+      background: var(--bg-card);
+      border-top: 2px solid var(--border-color);
+      padding: 1.1rem 1.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .btn-nav {
+      font-size: 1.1rem;
+      padding: 0.65rem 1.35rem;
+      font-weight: 700;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      color: #fff;
+    }
+
+    .btn-reset {
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    .keyboard-hints {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    kbd {
+      background: var(--border-color);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      color: var(--text-main);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation & Controls -->
+  <header>
+    <div class="header-left">
+      <span class="badge-qno" id="qNumBadge">Question 1 of 60</span>
+      <span class="badge-cefr" id="cefrBadge">A1 Baseline</span>
+      <select id="jumpSelect" aria-label="Jump to question"></select>
+    </div>
+
+    <div class="header-right">
+      <div class="control-group">
+        <span>Display Scale:</span>
+        <input type="range" id="fontSlider" min="20" max="48" value="34" aria-label="Master font scale slider">
+      </div>
+      <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle dark/light mode">
+        <span>☀️ Light</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Full-Page Interactive Slide Stage -->
+  <main>
+    <div class="card-stage">
+      
+      <!-- Sentence Space -->
+      <div class="sentence-container" id="sentenceBox"></div>
+
+      <!-- Multiple Choice Options -->
+      <div class="options-grid" id="optionsContainer"></div>
+
+      <!-- Pedagogical & Distractor Feedback Box -->
+      <div class="feedback-box" id="feedbackBox"></div>
+
+    </div>
+  </main>
+
+  <!-- Navigation Bar -->
+  <footer>
+    <div class="nav-buttons">
+      <button class="btn-nav" id="prevBtn">← Previous</button>
+      <button class="btn-nav btn-primary" id="nextBtn">Next →</button>
+      <button class="btn-reset" id="resetBtn">↻ Replay Question</button>
+    </div>
+    <div class="keyboard-hints">
+      Keyboard shortcuts: <kbd>←</kbd> <kbd>→</kbd> navigate &bull; <kbd>1</kbd>-<kbd>4</kbd> or <kbd>A</kbd>-<kbd>D</kbd> choose answer
+    </div>
+  </footer>
+
+  <script>
+    // Complete 60-Question Dataset from Placement Test
+    const questionsData = [
+      {
+        id: 1,
+        cefr: "A1 (have got)",
+        pre: "What",
+        post: "you got in your school bag today?",
+        options: [
+          { key: "A", text: "has", note: "What <mark>has Robert got</mark> in his school bag today? <em>('has' requires a 3rd-person singular subject like Robert or he).</em>" },
+          { key: "B", text: "have", correct: true, note: "Correct! In the expression 'have got', the auxiliary 'have' agrees with the second-person subject 'you'." },
+          { key: "C", text: "does", note: "What <mark>does Robert have</mark> in his school bag today? <em>('does' takes the base verb 'have', not 'got').</em>" },
+          { key: "D", text: "do", note: "What <mark>do you have</mark> in your school bag today? <em>('do' forms questions with the base verb 'have', not 'got').</em>" }
+        ]
+      },
+      {
+        id: 2,
+        cefr: "A1 (Food vocabulary)",
+        pre: "We usually have some fresh fruit with sweet",
+        post: "after dinner.",
+        options: [
+          { key: "A", text: "garlic", note: "We usually cook stir-fried beef with <mark>savory garlic</mark> for dinner. <em>(Garlic is a savory vegetable, not sweet).</em>" },
+          { key: "B", text: "salt", note: "We usually sprinkle <mark>a pinch of white salt on soup</mark> before dinner. <em>(Salt is salty, not sweet).</em>" },
+          { key: "C", text: "cream", correct: true, note: "Correct! 'Sweet cream' is a classic dessert topping with fresh fruit." },
+          { key: "D", text: "pepper", note: "We usually season grilled chicken with <mark>black pepper</mark> for dinner. <em>(Pepper is spicy/pungent).</em>" }
+        ]
+      },
+      {
+        id: 3,
+        cefr: "A1 (Present continuous)",
+        pre: "Minh and Linh",
+        post: "lunch in the canteen right now.",
+        options: [
+          { key: "A", text: "eat", note: "Minh and Linh <mark>eat lunch</mark> in the canteen <mark>every day</mark>. <em>('eat' expresses a routine, but 'right now' demands continuous).</em>" },
+          { key: "B", text: "eats", note: "Minh <mark>eats lunch</mark> in the canteen <mark>every day</mark>. <em>('eats' is for singular subjects in simple present).</em>" },
+          { key: "C", text: "are eating", correct: true, note: "Correct! The compound subject 'Minh and Linh' is plural and 'right now' requires the present continuous 'are eating'." },
+          { key: "D", text: "is eating", note: "Minh <mark>is eating</mark> lunch in the canteen right now. <em>('is eating' is singular; Minh and Linh are plural).</em>" }
+        ]
+      },
+      {
+        id: 4,
+        cefr: "A1 (Occupations)",
+        pre: "A",
+        post: "grows rice and takes care of farm animals.",
+        options: [
+          { key: "A", text: "pilot", note: "A <mark>pilot flies airplanes</mark> and travels across the world. <em>(Pilots fly planes).</em>" },
+          { key: "B", text: "farmer", correct: true, note: "Correct! A farmer cultivates crops like rice and raises livestock." },
+          { key: "C", text: "mechanic", note: "A <mark>mechanic repairs motorbikes and cars</mark> in a workshop. <em>(Mechanics fix machinery).</em>" },
+          { key: "D", text: "dentist", note: "A <mark>dentist cleans teeth and treats toothaches</mark>. <em>(Dentists treat dental health).</em>" }
+        ]
+      },
+      {
+        id: 5,
+        cefr: "A1 (Past simple 'be')",
+        pre: "It",
+        post: "my younger brother's birthday yesterday.",
+        options: [
+          { key: "A", text: "is", note: "It <mark>is</mark> my younger brother's birthday <mark>today</mark>. <em>('is' is present; 'yesterday' specifies the past).</em>" },
+          { key: "B", text: "was", correct: true, note: "Correct! 'Was' is the singular past tense of 'be' agreeing with 'it'." },
+          { key: "C", text: "are", note: "<mark>They are celebrating</mark> my brother's birthday right now. <em>('are' is plural present).</em>" },
+          { key: "D", text: "were", note: "<mark>We were at</mark> my younger brother's birthday party yesterday. <em>('were' is plural; 'it' takes 'was').</em>" }
+        ]
+      },
+      {
+        id: 6,
+        cefr: "A1 (Clothing lexis)",
+        pre: "Nam always wears a warm woolen",
+        post: "on his head in Da Lat.",
+        options: [
+          { key: "A", text: "glove", note: "Nam always wears a warm woolen <mark>glove on each hand</mark> in Da Lat. <em>(Gloves are worn on hands).</em>" },
+          { key: "B", text: "belt", note: "Nam always wears a <mark>leather belt around his waist</mark> in Da Lat. <em>(Belts are worn on trousers/waist).</em>" },
+          { key: "C", text: "cap", correct: true, note: "Correct! A cap/beanie is worn on the head for warmth." },
+          { key: "D", text: "sock", note: "Nam always wears a warm woolen <mark>sock on each foot</mark> in Da Lat. <em>(Socks are worn on feet).</em>" }
+        ]
+      },
+      {
+        id: 7,
+        cefr: "A1 (Past simple negative)",
+        pre: "My sister",
+        post: "to English class last Saturday.",
+        options: [
+          { key: "A", text: "didn't go", correct: true, note: "Correct! The past auxiliary 'didn't' is followed by the bare infinitive 'go'." },
+          { key: "B", text: "didn't went", note: "My sister <mark>went</mark> to English class last Saturday. <em>(Never use a past tense form like 'went' after the auxiliary 'didn't').</em>" },
+          { key: "C", text: "doesn't go", note: "My sister <mark>doesn't go</mark> to English class <mark>on Saturdays</mark>. <em>('doesn't go' is simple present routine, not past 'last Saturday').</em>" },
+          { key: "D", text: "wasn't go", note: "My sister <mark>wasn't in</mark> English class last Saturday. <em>('wasn't' cannot pair with bare base verb 'go').</em>" }
+        ]
+      },
+      {
+        id: 8,
+        cefr: "A1 (Town places)",
+        pre: "You can buy stamps and send parcels at the local",
+        post: ".",
+        options: [
+          { key: "A", text: "cinema", note: "You can <mark>watch new movies and eat popcorn</mark> at the local cinema. <em>(Cinemas screen films).</em>" },
+          { key: "B", text: "post office", correct: true, note: "Correct! A post office handles mail, stamps, and parcels." },
+          { key: "C", text: "stadium", note: "You can <mark>watch football matches and cheer</mark> at the local stadium. <em>(Stadiums host sports).</em>" },
+          { key: "D", text: "pharmacy", note: "You can <mark>buy medicine and medical supplies</mark> at the local pharmacy. <em>(Pharmacies sell drugs).</em>" }
+        ]
+      },
+      {
+        id: 9,
+        cefr: "A1 (Superlatives)",
+        pre: "This laptop is the",
+        post: "one in the entire computer store.",
+        options: [
+          { key: "A", text: "light", note: "This laptop is <mark>a very light one</mark> in the computer store. <em>('the' requires a superlative degree, not the base adjective).</em>" },
+          { key: "B", text: "lighter", note: "This laptop is <mark>lighter than that one</mark> in the store. <em>('lighter' is comparative; use it with 'than').</em>" },
+          { key: "C", text: "lightest", correct: true, note: "Correct! One-syllable adjectives form the superlative with '-est' ('the lightest')." },
+          { key: "D", text: "most light", note: "This laptop is <mark>the most modern</mark> one in the entire computer store. <em>(Short adjectives use '-est', not 'most light').</em>" }
+        ]
+      },
+      {
+        id: 10,
+        cefr: "A1 (Family relationships)",
+        pre: "Your",
+        post: "is your father’s sister.",
+        options: [
+          { key: "A", text: "niece", note: "Your niece is <mark>your sibling's daughter</mark>. <em>(A niece is your brother or sister's child).</em>" },
+          { key: "B", text: "aunt", correct: true, note: "Correct! Your father or mother's sister is your aunt." },
+          { key: "C", text: "grandmother", note: "Your grandmother is <mark>your father’s mother</mark>. <em>(A grandmother is a parent's mother).</em>" },
+          { key: "D", text: "daughter", note: "Your daughter is <mark>your own female child</mark>. <em>(Not your father's sister).</em>" }
+        ]
+      },
+      {
+        id: 11,
+        cefr: "A1/A2 (Past continuous)",
+        pre: "Lan",
+        post: "a book when the lights suddenly went out.",
+        options: [
+          { key: "A", text: "read", note: "Lan <mark>read a book yesterday afternoon</mark>. <em>(Past simple expresses a completed event, not an interrupted ongoing action).</em>" },
+          { key: "B", text: "was reading", correct: true, note: "Correct! Past continuous ('was reading') describes the ongoing background activity interrupted by 'went out'." },
+          { key: "C", text: "is reading", note: "Lan <mark>is reading a book right now</mark>. <em>('is reading' is present tense; 'went out' is past).</em>" },
+          { key: "D", text: "reads", note: "Lan <mark>reads a book every evening</mark>. <em>(Simple present expresses habits).</em>" }
+        ]
+      },
+      {
+        id: 12,
+        cefr: "A1 (Personality lexis)",
+        pre: "Our new classmate is very",
+        post: ". He always tells jokes and makes us laugh.",
+        options: [
+          { key: "A", text: "funny", correct: true, note: "Correct! 'Funny' describes someone who tells jokes and causes laughter." },
+          { key: "B", text: "serious", note: "Our new classmate is very <mark>serious; he rarely tells jokes or smiles</mark>. <em>('serious' is the antonym of playful/funny).</em>" },
+          { key: "C", text: "shy", note: "Our new classmate is very <mark>shy; he avoids speaking in front of crowds</mark>. <em>(Telling jokes publicly contradicts being shy).</em>" },
+          { key: "D", text: "nervous", note: "Our new classmate is very <mark>nervous before final examinations</mark>. <em>('nervous' means anxious).</em>" }
+        ]
+      },
+      {
+        id: 13,
+        cefr: "A1/A2 (Future predictions)",
+        pre: "In fifty years, every family",
+        post: "a smart flying car.",
+        options: [
+          { key: "A", text: "has", note: "Today, almost every family <mark>has a motorbike</mark>. <em>('has' is present; 'in fifty years' points to the future).</em>" },
+          { key: "B", text: "will have", correct: true, note: "Correct! 'Will have' is used for long-term future predictions." },
+          { key: "C", text: "is having", note: "Look, our family <mark>is having dinner together right now</mark>. <em>('is having' indicates ongoing present actions).</em>" },
+          { key: "D", text: "had", note: "Fifty years ago, few families <mark>had a personal car</mark>. <em>('had' is past tense).</em>" }
+        ]
+      },
+      {
+        id: 14,
+        cefr: "A1 (School subjects)",
+        pre: "We learned about plant cells and insects in our",
+        post: "lesson.",
+        options: [
+          { key: "A", text: "history", note: "We learned about <mark>ancient dynasties and famous battles</mark> in our history lesson. <em>(History is past events).</em>" },
+          { key: "B", text: "geography", note: "We learned about <mark>rivers, climates, and continents</mark> in our geography lesson. <em>(Geography is earth/maps).</em>" },
+          { key: "C", text: "biology", correct: true, note: "Correct! Biology is the scientific study of living organisms such as plants and insects." },
+          { key: "D", text: "maths", note: "We learned about <mark>fractions, equations, and algebra</mark> in our maths lesson. <em>(Maths deals with numbers).</em>" }
+        ]
+      },
+      {
+        id: 15,
+        cefr: "A1/A2 (Modals: prohibition)",
+        pre: "You",
+        post: "talk loudly during the formal examination.",
+        options: [
+          { key: "A", text: "must", note: "You <mark>must remain completely quiet</mark> during the formal examination. <em>('must' would command students to talk loudly!).</em>" },
+          { key: "B", text: "mustn't", correct: true, note: "Correct! 'Mustn't' expresses strict prohibition (it is against examination rules to talk)." },
+          { key: "C", text: "don't have to", note: "You <mark>don't have to stay after finishing</mark> your paper early. <em>('don't have to' implies choice, whereas exam silence is strictly mandatory).</em>" },
+          { key: "D", text: "can", note: "You <mark>can ask the invigilator for extra paper</mark> during the examination. <em>('can' gives permission).</em>" }
+        ]
+      },
+      {
+        id: 16,
+        cefr: "A2 (Technology lexis)",
+        pre: "It takes only a few seconds to",
+        post: "this mobile app from the store.",
+        options: [
+          { key: "A", text: "download", correct: true, note: "Correct! You 'download' an app from an app store onto your mobile device." },
+          { key: "B", text: "upload", note: "It takes only a few seconds to <mark>upload your photo to the cloud</mark>. <em>('upload' means sending data from your device to the web).</em>" },
+          { key: "C", text: "post", note: "It takes only a few seconds to <mark>post a comment on the forum</mark>. <em>('post' means publishing a message/media).</em>" },
+          { key: "D", text: "search", note: "It takes only a few seconds to <mark>search for this app</mark> in the store. <em>('search' takes the preposition 'for' when seeking an item).</em>" }
+        ]
+      },
+      {
+        id: 17,
+        cefr: "A2 (for vs. since)",
+        pre: "I have studied French",
+        post: "nearly four years.",
+        options: [
+          { key: "A", text: "since", note: "I have studied French <mark>since 2022</mark>. <em>('since' marks a specific starting point in time, not a duration).</em>" },
+          { key: "B", text: "for", correct: true, note: "Correct! 'For' is followed by a period/duration of time ('nearly four years')." },
+          { key: "C", text: "from", note: "I studied French <mark>from 2020 to 2024</mark>. <em>('from' requires an ending point with 'to'/'until').</em>" },
+          { key: "D", text: "during", note: "I studied French <mark>during my high school years</mark>. <em>('during' takes a noun phrase event, not a numerical quantity of years in present perfect).</em>" }
+        ]
+      },
+      {
+        id: 18,
+        cefr: "A2 (Collocations)",
+        pre: "Everyone",
+        post: "a wonderful time at the weekend celebration.",
+        options: [
+          { key: "A", text: "had", correct: true, note: "Correct! 'Have a wonderful time' is the natural, idiomatic collocation." },
+          { key: "B", text: "did", note: "Everyone <mark>did their best</mark> at the weekend celebration. <em>(We do not say 'did a time').</em>" },
+          { key: "C", text: "made", note: "Everyone <mark>made handmade crafts</mark> at the weekend celebration. <em>(We do not say 'made a time').</em>" },
+          { key: "D", text: "went", note: "Everyone <mark>went to</mark> the weekend celebration. <em>('went' is an intransitive motion verb; it cannot take 'a time' as an object).</em>" }
+        ]
+      },
+      {
+        id: 19,
+        cefr: "A2 (Present simple passive)",
+        pre: "Butter",
+        post: "from cow's milk.",
+        options: [
+          { key: "A", text: "makes", note: "The dairy factory <mark>makes butter</mark> from cow's milk. <em>(Butter doesn't make itself; active voice is incorrect).</em>" },
+          { key: "B", text: "is make", note: "Butter <mark>is made</mark> from cow's milk. <em>(Passive voice requires 'be' + past participle V3, not base verb 'make').</em>" },
+          { key: "C", text: "is made", correct: true, note: "Correct! 'is made from' is the correct passive voice formula for singular uncountable nouns." },
+          { key: "D", text: "has made", note: "The artisan chef <mark>has made</mark> delicious butter from cow's milk. <em>('has made' is active voice).</em>" }
+        ]
+      },
+      {
+        id: 20,
+        cefr: "A2 (Body parts)",
+        pre: "Your",
+        post: "connects your head to your shoulders.",
+        options: [
+          { key: "A", text: "elbow", note: "Your elbow <mark>connects your upper arm to your forearm</mark>. <em>(Elbows are part of the arm).</em>" },
+          { key: "B", text: "neck", correct: true, note: "Correct! The neck connects the human head to the torso and shoulders." },
+          { key: "C", text: "knee", note: "Your knee <mark>connects your thigh to your lower leg</mark>. <em>(Knees are in the leg).</em>" },
+          { key: "D", text: "stomach", note: "Your stomach <mark>digests meals in your abdominal cavity</mark>. <em>(The stomach is an internal digestive organ).</em>" }
+        ]
+      },
+      {
+        id: 21,
+        cefr: "A2 (as... as comparison)",
+        pre: "Da Nang isn't",
+        post: "Hanoi in the winter.",
+        options: [
+          { key: "A", text: "as cold as", correct: true, note: "Correct! Comparisons of equality or inequality use the pattern '(not) as + adjective + as'." },
+          { key: "B", text: "colder as", note: "Da Nang isn't <mark>colder than</mark> Hanoi in the winter. <em>(Comparative '-er' must pair with 'than', never 'as').</em>" },
+          { key: "C", text: "as cold than", note: "Da Nang isn't <mark>as cold as</mark> Hanoi in the winter. <em>('as cold' must pair with 'as', never 'than').</em>" },
+          { key: "D", text: "so cold than", note: "Da Nang isn't <mark>so cold that you need five jackets</mark>. <em>('so cold' pairs with 'that' in result clauses, never 'than').</em>" }
+        ]
+      },
+      {
+        id: 22,
+        cefr: "A2 (Collocations)",
+        pre: "In many countries, teenagers cannot",
+        post: "school until they turn 16.",
+        options: [
+          { key: "A", text: "leave", correct: true, note: "Correct! 'Leave school' is the standard phrase for completing or finishing compulsory education." },
+          { key: "B", text: "start", note: "Children in Vietnam <mark>start primary school</mark> when they turn 6. <em>(Teenagers start school in early childhood, not at 16).</em>" },
+          { key: "C", text: "pass", note: "Teenagers cannot <mark>pass their national graduation exam</mark> without studying. <em>(We pass exams, not 'pass school').</em>" },
+          { key: "D", text: "enter", note: "Toddlers cannot <mark>enter kindergarten</mark> until they turn 3. <em>(Students enter school much earlier than 16).</em>" }
+        ]
+      },
+      {
+        id: 23,
+        cefr: "A2 (Quantifiers)",
+        pre: "There aren't",
+        post: "open parks near our apartment building.",
+        options: [
+          { key: "A", text: "much", note: "There isn't <mark>much open space</mark> near our apartment building. <em>('much' is only used with singular uncountable nouns).</em>" },
+          { key: "B", text: "many", correct: true, note: "Correct! 'Parks' is a plural countable noun, requiring 'many' in negative sentences." },
+          { key: "C", text: "some", note: "There <mark>are some open parks</mark> near our apartment building. <em>('some' is typically used in affirmative statements, not negative 'aren't').</em>" },
+          { key: "D", text: "little", note: "There is <mark>little green space</mark> near our apartment building. <em>('little' is used with uncountable nouns in affirmative clauses).</em>" }
+        ]
+      },
+      {
+        id: 24,
+        cefr: "A2 (Do vs Make)",
+        pre: "Could you please",
+        post: "me a favor and carry this heavy box?",
+        options: [
+          { key: "A", text: "do", correct: true, note: "Correct! The fixed collocation is 'do someone a favor'." },
+          { key: "B", text: "make", note: "Could you please <mark>make an effort</mark> and carry this heavy box? <em>('make' collocated with 'effort', but never with 'favor').</em>" },
+          { key: "C", text: "take", note: "Could you please <mark>take care of</mark> this heavy box? <em>(We do not say 'take a favor').</em>" },
+          { key: "D", text: "give", note: "Could you please <mark>give me a hand</mark> and carry this heavy box? <em>(The idiom is 'give a hand', but 'do a favor').</em>" }
+        ]
+      },
+      {
+        id: 25,
+        cefr: "A2 (Modals of advice)",
+        pre: "You have a headache; I think you",
+        post: "turn off the computer now.",
+        options: [
+          { key: "A", text: "should", correct: true, note: "Correct! 'Should' is the standard modal verb for giving friendly advice and recommendations." },
+          { key: "B", text: "shouldn't", note: "You have a headache; I think you <mark>shouldn't stare at the bright screen</mark> now. <em>('shouldn't' contradicts turning off the computer).</em>" },
+          { key: "C", text: "must", note: "You have a high fever; you <mark>must see a medical doctor</mark> immediately. <em>('I think' softens advice; 'must' is too forceful here).</em>" },
+          { key: "D", text: "mustn't", note: "You have a headache; you <mark>mustn't play computer games all night</mark>. <em>('mustn't' implies prohibition against doing it).</em>" }
+        ]
+      },
+      {
+        id: 26,
+        cefr: "A2 (Shopping lexis)",
+        pre: "Keep the paper",
+        post: "if you want to exchange the shirt later.",
+        options: [
+          { key: "A", text: "ticket", note: "Keep the paper <mark>ticket to board the train</mark> later. <em>(Tickets are for transport or events).</em>" },
+          { key: "B", text: "menu", note: "Look at the paper <mark>menu to choose what food to order</mark>. <em>(A menu lists meal selections).</em>" },
+          { key: "C", text: "receipt", correct: true, note: "Correct! A receipt is the official proof of purchase required to return or exchange goods." },
+          { key: "D", text: "bill", note: "Please pay the electricity <mark>bill before the end of the month</mark>. <em>(A bill is a request for payment, not proof of purchase).</em>" }
+        ]
+      },
+      {
+        id: 27,
+        cefr: "A2 (Zero conditional)",
+        pre: "If you",
+        post: "water to 100°C, it boils.",
+        options: [
+          { key: "A", text: "will heat", note: "If you <mark>heat water</mark> to 100°C, it boils. <em>(Zero and first conditionals never take 'will' inside the 'if' clause).</em>" },
+          { key: "B", text: "heated", note: "If you <mark>heated the solution, it would boil</mark>. <em>('heated' creates a second conditional requiring 'would boil').</em>" },
+          { key: "C", text: "heat", correct: true, note: "Correct! Scientific facts (Zero Conditional) require Present Simple in both clauses: 'If + Present Simple, Present Simple'." },
+          { key: "D", text: "are heating", note: "While you <mark>are heating the water, chop the carrots</mark>. <em>(Continuous aspect is not used for timeless universal laws).</em>" }
+        ]
+      },
+      {
+        id: 28,
+        cefr: "A2 (Extreme adjectives)",
+        pre: "We walked up the mountain all morning, and now we are completely",
+        post: ".",
+        options: [
+          { key: "A", text: "exhausted", correct: true, note: "Correct! 'Exhausted' is an extreme adjective meaning 'very tired', naturally modified by 'completely'." },
+          { key: "B", text: "excited", note: "We are going on holiday tomorrow, and we are <mark>extremely excited</mark>! <em>(Walking up a mountain all morning makes you tired, not excited).</em>" },
+          { key: "C", text: "worried", note: "The storm was fierce, and our family was <mark>worried about our safety</mark>. <em>('worried' means anxious).</em>" },
+          { key: "D", text: "disappointed", note: "The scenic peak was covered in thick fog, so we were <mark>disappointed by the view</mark>. <em>(Physical climbing causes exhaustion).</em>" }
+        ]
+      },
+      {
+        id: 29,
+        cefr: "A2 (Past simple passive)",
+        pre: "This landmark bridge",
+        post: "by a French architect in 1902.",
+        options: [
+          { key: "A", text: "was built", correct: true, note: "Correct! The singular past passive form is 'was built' with the agent introduced by 'by'." },
+          { key: "B", text: "built", note: "A French architect <mark>built this landmark bridge</mark> in 1902. <em>(The bridge did not build anything; active voice is grammatically impossible).</em>" },
+          { key: "C", text: "is built", note: "This modern suspension bridge <mark>is built with high-grade steel</mark>. <em>('in 1902' designates a past time; 'is built' is present).</em>" },
+          { key: "D", text: "has built", note: "The construction company <mark>has built many bridges</mark> in recent years. <em>('has built' is active voice).</em>" }
+        ]
+      },
+      {
+        id: 30,
+        cefr: "A2 (Action verbs: liquids)",
+        pre: "Can you",
+        post: "some orange juice into my cup, please?",
+        options: [
+          { key: "A", text: "spill", note: "Be careful not to <mark>spill orange juice on your clean shirt</mark>! <em>('spill' means an accidental and messy leak).</em>" },
+          { key: "B", text: "pour", correct: true, note: "Correct! 'Pour' means to make a liquid flow smoothly from a container into a cup." },
+          { key: "C", text: "mix", note: "Can you <mark>mix the orange juice with sparkling water</mark>, please? <em>('mix' means combining multiple ingredients).</em>" },
+          { key: "D", text: "drop", note: "Be careful not to <mark>drop the glass cup on the hard floor</mark>! <em>(Liquids are poured, not dropped).</em>" }
+        ]
+      },
+      {
+        id: 31,
+        cefr: "A2 (Absence of obligation)",
+        pre: "Tomorrow is Sunday, so we",
+        post: "wake up early for class.",
+        options: [
+          { key: "A", text: "mustn't", note: "We <mark>mustn't cheat on our test</mark> on Monday. <em>('mustn't' implies a strict prohibition; you are allowed to wake up early if you wish).</em>" },
+          { key: "B", text: "don't have to", correct: true, note: "Correct! 'Don't have to' signifies that there is no obligation or necessity because it is Sunday." },
+          { key: "C", text: "should", note: "We <mark>should review our notes</mark> before next week's class. <em>('should' expresses a positive recommendation).</em>" },
+          { key: "D", text: "can't", note: "We <mark>can't enter the school building</mark> on Sundays because the gate is locked. <em>('can't' implies inability or external barrier).</em>" }
+        ]
+      },
+      {
+        id: 32,
+        cefr: "A2 (Sports lexis: beat vs win)",
+        pre: "Our football team played exceptionally well and",
+        post: "the championship rivals 3–1.",
+        options: [
+          { key: "A", text: "won", note: "Our football team played exceptionally well and <mark>won the championship final</mark> 3–1. <em>(You 'win' a match or trophy, but you 'beat' an opponent).</em>" },
+          { key: "B", text: "scored", note: "Our football team played well and <mark>scored three goals against</mark> their rivals. <em>(You score points/goals, not rivals).</em>" },
+          { key: "C", text: "beat", correct: true, note: "Correct! You 'beat' an opposing player or team in a match." },
+          { key: "D", text: "passed", note: "Our defender <mark>passed the ball quickly to the striker</mark>. <em>('passed' refers to moving the ball to a teammate).</em>" }
+        ]
+      },
+      {
+        id: 33,
+        cefr: "A2 (Present perfect with 'so far')",
+        pre: "We arrived in Hue on Tuesday, and so far we",
+        post: "three ancient pagodas.",
+        options: [
+          { key: "A", text: "visited", note: "We arrived on Tuesday, and we <mark>visited three pagodas yesterday</mark>. <em>(Past simple is for finished past points; 'so far' requires Present Perfect).</em>" },
+          { key: "B", text: "have visited", correct: true, note: "Correct! The time expression 'so far' (up to the present moment) takes the Present Perfect." },
+          { key: "C", text: "are visiting", note: "Right at this moment, we <mark>are visiting an ancient pagoda</mark>. <em>(Continuous aspect cannot count completed totals like 'three pagodas').</em>" },
+          { key: "D", text: "visit", note: "Whenever we spend holidays in Hue, we <mark>visit ancient pagodas</mark>. <em>(Simple present is for habitual routines).</em>" }
+        ]
+      },
+      {
+        id: 34,
+        cefr: "A2 (Natural disasters)",
+        pre: "After three days of non-stop tropical rain, there was a major",
+        post: "across the valley.",
+        options: [
+          { key: "A", text: "drought", note: "After <mark>nine months with no rainfall</mark>, there was a severe drought. <em>(Drought is an extreme lack of water).</em>" },
+          { key: "B", text: "earthquake", note: "Deep subterranean tectonic movements caused a major <mark>earthquake across the island</mark>. <em>(Earthquakes are geological).</em>" },
+          { key: "C", text: "flood", correct: true, note: "Correct! Continuous torrential rainfall leads to riverbanks overflowing and flooding." },
+          { key: "D", text: "wildfire", note: "Intense heatwaves and lightning strikes ignited a massive <mark>wildfire across the dry forest</mark>. <em>(Wildfires burn in dry conditions).</em>" }
+        ]
+      },
+      {
+        id: 35,
+        cefr: "A2/B1 (Future continuous)",
+        pre: "I cannot join the game at 8 PM because I",
+        post: "an online lecture then.",
+        options: [
+          { key: "A", text: "will watch", note: "I think I <mark>will watch the lecture recording tomorrow</mark>. <em>('will watch' indicates a spontaneous choice or general fact).</em>" },
+          { key: "B", text: "will be watching", correct: true, note: "Correct! Future Continuous ('will be watching') depicts an activity in progress at a specific future moment ('at 8 PM... then')." },
+          { key: "C", text: "watched", note: "I cannot join the game because I <mark>watched lectures all day and need to rest</mark>. <em>('watched' is past; '8 PM then' is future).</em>" },
+          { key: "D", text: "have watched", note: "I already understand the topic because I <mark>have watched the online lecture twice</mark>. <em>(Present perfect refers to experience).</em>" }
+        ]
+      },
+      {
+        id: 36,
+        cefr: "B1 (Phrasal verbs: travel)",
+        pre: "Passengers must check",
+        post: "at the counter at least two hours before departure.",
+        options: [
+          { key: "A", text: "off", note: "Passengers should check <mark>off each item on their packing list</mark>. <em>('check off' means to tick items on a list).</em>" },
+          { key: "B", text: "out", note: "Hotel guests must check <mark>out at the front reception desk by noon</mark>. <em>('check out' means leaving a hotel).</em>" },
+          { key: "C", text: "in", correct: true, note: "Correct! 'Check in' means registering upon arrival at an airport or hotel." },
+          { key: "D", text: "over", note: "Passengers should check <mark>over their tickets to verify names and dates</mark>. <em>('check over' means to inspect carefully).</em>" }
+        ]
+      },
+      {
+        id: 37,
+        cefr: "B1 (Relative clauses: whose)",
+        pre: "That historic bookstore,",
+        post: "owner lived in London for twenty years, sells rare novels.",
+        options: [
+          { key: "A", text: "who", note: "That bookstore owner, <mark>who lived in London</mark>, sells rare novels. <em>('who' refers directly to a person, but here we need possession: 'whose owner').</em>" },
+          { key: "B", text: "which", note: "That historic bookstore, <mark>which opened eighty years ago</mark>, sells rare novels. <em>('which' cannot indicate possession over the noun 'owner').</em>" },
+          { key: "C", text: "whose", correct: true, note: "Correct! 'Whose' is the relative possessive pronoun denoting that the bookstore possesses/has that owner." },
+          { key: "D", text: "that", note: "The bookstore <mark>that has a blue sign</mark> sells rare novels. <em>('that' is never used in non-defining clauses set off by commas).</em>" }
+        ]
+      },
+      {
+        id: 38,
+        cefr: "B1 (Dependent prepositions)",
+        pre: "Huy forgot to submit the assignment on time, so he sent an email to",
+        post: "to the teacher.",
+        options: [
+          { key: "A", text: "complain", note: "Huy sent an email to <mark>complain about the difficult homework</mark> to the teacher. <em>(We complain 'about' an issue, not apologise for a mistake).</em>" },
+          { key: "B", text: "apologise", correct: true, note: "Correct! The standard pattern is 'apologise to someone (for something)'." },
+          { key: "C", text: "disagree", note: "Huy politely raised his hand to <mark>disagree with the teacher's proposed date</mark>. <em>('disagree' takes 'with', not 'to').</em>" },
+          { key: "D", text: "argue", note: "Huy sent an email to <mark>argue with the teacher about the penalty</mark>. <em>('argue' takes 'with someone', not 'to someone').</em>" }
+        ]
+      },
+      {
+        id: 39,
+        cefr: "B1 (Causative structures)",
+        pre: "Mai goes to the salon every two months to",
+        post: ".",
+        options: [
+          { key: "A", text: "cut her hair", note: "Mai stood in front of the bathroom mirror to <mark>cut her hair herself</mark>. <em>('cut her hair' means she cuts it personally with her own hands).</em>" },
+          { key: "B", text: "have her hair cut", correct: true, note: "Correct! The causative structure 'have + object + past participle (cut)' indicates that a professional performs the service for you." },
+          { key: "C", text: "get cut her hair", note: "Mai goes to the salon to <mark>get her hair cut</mark>. <em>(The causative pattern requires: get + object + past participle).</em>" },
+          { key: "D", text: "have cut her hair", note: "Mai seems to <mark>have cut her hair shorter than usual</mark>. <em>('have cut' is a perfect infinitive active, not a causative).</em>" }
+        ]
+      },
+      {
+        id: 40,
+        cefr: "B1 (Verb + preposition)",
+        pre: "When he was a teenager, Bao",
+        post: "of becoming an airline pilot.",
+        options: [
+          { key: "A", text: "dreamed", correct: true, note: "Correct! The verb 'dream' takes the preposition 'of' or 'about' followed by a gerund ('dreamed of becoming')." },
+          { key: "B", text: "intended", note: "When he was a teenager, Bao <mark>intended to become an airline pilot</mark>. <em>('intend' is followed by a to-infinitive, not 'of').</em>" },
+          { key: "C", text: "wished", note: "Bao always <mark>wished that he could become an airline pilot</mark>. <em>('wish' takes a 'that' clause or 'to become', not 'of').</em>" },
+          { key: "D", text: "wondered", note: "Bao often <mark>wondered about what it was like</mark> to fly. <em>('wonder' does not take 'of becoming').</em>" }
+        ]
+      },
+      {
+        id: 41,
+        cefr: "B1 (Continuous passive)",
+        pre: "We must take the stairs because the elevator",
+        post: "at the moment.",
+        options: [
+          { key: "A", text: "is repaired", note: "The elevator <mark>is repaired once every month</mark> by technicians. <em>('is repaired' indicates habitual routine, but 'at the moment' requires continuous aspect).</em>" },
+          { key: "B", text: "is repairing", note: "The engineer <mark>is repairing the elevator</mark> at the moment. <em>(Active voice implies the elevator is repairing something else!).</em>" },
+          { key: "C", text: "is being repaired", correct: true, note: "Correct! Present Continuous Passive is formed with 'is + being + past participle (repaired)'." },
+          { key: "D", text: "has repaired", note: "The technician <mark>has repaired the elevator completely</mark>. <em>('has repaired' is active voice).</em>" }
+        ]
+      },
+      {
+        id: 42,
+        cefr: "B1 (Phrasal verbs: postponement)",
+        pre: "Don't",
+        post: "your revision until the night before the final test.",
+        options: [
+          { key: "A", text: "take off", note: "Don't <mark>take off your warm jacket</mark> in the cold exam hall. <em>('take off' means removing clothes or an airplane departing).</em>" },
+          { key: "B", text: "put off", correct: true, note: "Correct! 'Put off' is the phrasal verb meaning to postpone or delay an action." },
+          { key: "C", text: "get over", note: "It takes several days to <mark>get over a severe cold</mark>. <em>('get over' means to recover from an illness or setback).</em>" },
+          { key: "D", text: "turn down", note: "Don't <mark>turn down such a prestigious university offer</mark>. <em>('turn down' means to reject or reduce volume).</em>" }
+        ]
+      },
+      {
+        id: 43,
+        cefr: "B1 (Second conditional)",
+        pre: "If people",
+        post: "public buses more often, urban traffic would improve quickly.",
+        options: [
+          { key: "A", text: "use", note: "If people <mark>use public buses more often, traffic will improve</mark>. <em>(Using 'use' makes it a First Conditional, which requires 'will improve', not 'would').</em>" },
+          { key: "B", text: "used", correct: true, note: "Correct! Second Conditional (hypothetical present/future) uses: 'If + Past Simple, would + base verb'." },
+          { key: "C", text: "would use", note: "If people <mark>used public buses</mark>, traffic would improve. <em>(Do not use 'would' in the conditional 'if' clause).</em>" },
+          { key: "D", text: "had used", note: "If people <mark>had used public buses, traffic would have improved</mark>. <em>('had used' forms a Third Conditional, requiring 'would have improved').</em>" }
+        ]
+      },
+      {
+        id: 44,
+        cefr: "B1 (Phrasal verbs: damage)",
+        pre: "A strong typhoon has enough power to",
+        post: "ancient street trees.",
+        options: [
+          { key: "A", text: "collapse", note: "The old abandoned building might <mark>collapse during the storm</mark>. <em>('collapse' is intransitive; it cannot take 'ancient street trees' as direct object).</em>" },
+          { key: "B", text: "knock over", correct: true, note: "Correct! 'Knock over' is a transitive phrasal verb meaning to strike down and cause something standing to fall." },
+          { key: "C", text: "fall off", note: "Loose tiles might <mark>fall off the roof</mark> during high winds. <em>('fall off' is intransitive).</em>" },
+          { key: "D", text: "blow out", note: "A strong gust of wind can <mark>blow out a candle</mark>. <em>('blow out' is used for extinguishing flames).</em>" }
+        ]
+      },
+      {
+        id: 45,
+        cefr: "B1 (Modal deduction: past)",
+        pre: "His motorcycle is still parked in the driveway, so he",
+        post: "have left for the office yet.",
+        options: [
+          { key: "A", text: "must", note: "His keys are missing and the gate is open, so he <mark>must have left for the office</mark>. <em>('must have' expresses positive certainty, contradicting the parked bike).</em>" },
+          { key: "B", text: "can't", correct: true, note: "Correct! 'Can't have + past participle' expresses logical certainty that something was impossible in the past." },
+          { key: "C", text: "might", note: "He <mark>might have left with a coworker</mark>, but we are not sure. <em>('might have' expresses uncertain possibility, but the parked bike provides strong negative evidence).</em>" },
+          { key: "D", text: "should", note: "He woke up early, so he <mark>should have arrived at the office by now</mark>. <em>('should have' expresses expectation, not deduction based on physical clues).</em>" }
+        ]
+      },
+      {
+        id: 46,
+        cefr: "B1 (Prepositions / Collocations)",
+        pre: "The local guide took the tour group",
+        post: "the ancient quarter and shared folk tales.",
+        options: [
+          { key: "A", text: "across", note: "The ferry took the tour group <mark>across the wide river</mark>. <em>('across' implies crossing from one edge to the other).</em>" },
+          { key: "B", text: "around", correct: true, note: "Correct! 'Take someone around' means to guide visitors on an exploratory tour visiting multiple spots within an area." },
+          { key: "C", text: "over", note: "The cable car took the tour group <mark>over the rocky valleys</mark>. <em>('over' means above).</em>" },
+          { key: "D", text: "through", note: "The local guide took the tour group <mark>through the dark underground tunnel</mark>. <em>('around' is the customary collocation for neighborhood tours).</em>" }
+        ]
+      },
+      {
+        id: 47,
+        cefr: "B1 (Third conditional)",
+        pre: "If she had taken an umbrella this morning, she",
+        post: "soaked in the afternoon storm.",
+        options: [
+          { key: "A", text: "wouldn't get", note: "If she carried an umbrella every day, she <mark>wouldn't get soaked</mark>. <em>('wouldn't get' is used in Second Conditionals for hypothetical present situations).</em>" },
+          { key: "B", text: "wouldn't have got", correct: true, note: "Correct! Third Conditional (hypothetical past condition and past result) requires: 'If + had + V3, would have + V3'." },
+          { key: "C", text: "didn't get", note: "She took an umbrella, so she <mark>didn't get soaked in the storm</mark>. <em>(Past simple 'didn't get' states a factual past event, not a conditional result).</em>" },
+          { key: "D", text: "hadn't got", note: "If she <mark>hadn't got soaked, she wouldn't have caught a cold</mark>. <em>('hadn't got' belongs inside an 'if' clause).</em>" }
+        ]
+      },
+      {
+        id: 48,
+        cefr: "B1 (Abstract nouns)",
+        pre: "Despite facing several tough challenges during the trek, she showed remarkable",
+        post: "and finished first.",
+        options: [
+          { key: "A", text: "determination", correct: true, note: "Correct! 'Determination' means the willpower and firmness of purpose needed to overcome difficulties and win." },
+          { key: "B", text: "hesitation", note: "She felt sudden fear, and her <mark>hesitation cost her several valuable seconds</mark>. <em>('hesitation' means wavering or pausing in doubt).</em>" },
+          { key: "C", text: "confusion", note: "The trail markers were washed away, causing widespread <mark>confusion among the hikers</mark>. <em>('confusion' means lack of clarity).</em>" },
+          { key: "D", text: "destination", note: "After hours of strenuous hiking, the team finally reached their <mark>mountain summit destination</mark>. <em>(A destination is a physical location).</em>" }
+        ]
+      },
+      {
+        id: 49,
+        cefr: "B1/B1+ (Participle clauses)",
+        pre: "The training camp,",
+        post: "of track running and swimming, was demanding.",
+        options: [
+          { key: "A", text: "consisted", note: "The training camp <mark>consisted of track running and swimming</mark>. <em>('consisted' creates a finite verb error in non-defining clauses without 'which').</em>" },
+          { key: "B", text: "consist", note: "Summer training camps <mark>normally consist of multiple sports</mark>. <em>('consist' is an uninflected base verb).</em>" },
+          { key: "C", text: "consisting", correct: true, note: "Correct! 'Consisting' is a reduced relative participle clause replacing 'which consisted of'." },
+          { key: "D", text: "consists", note: "The daily workout schedule <mark>consists of intense cardiovascular exercises</mark>. <em>(Cannot use finite present 'consists' inside a comma-separated modifier for past 'was').</em>" }
+        ]
+      },
+      {
+        id: 50,
+        cefr: "B1 (Legal / Incident lexis)",
+        pre: "A passerby who",
+        post: "the motorcycle collision reported the details to the traffic police.",
+        options: [
+          { key: "A", text: "witnessed", correct: true, note: "Correct! 'Witnessed' means to personally see an accident, crime, or event take place." },
+          { key: "B", text: "committed", note: "The reckless driver who <mark>committed a serious traffic offense</mark> was penalized. <em>(People commit offenses/crimes, not collisions).</em>" },
+          { key: "C", text: "charged", note: "The police inspector <mark>charged the reckless driver with speeding</mark>. <em>(Officials charge suspects with crimes).</em>" },
+          { key: "D", text: "sentenced", note: "The criminal judge <mark>sentenced the offender to community service</mark>. <em>(Judges sentence convicted criminals).</em>" }
+        ]
+      },
+      {
+        id: 51,
+        cefr: "B1+ (Multi-word verb order)",
+        pre: "I promised to help clean the lab, so I really cannot get",
+        post: "now.",
+        options: [
+          { key: "A", text: "it out of", note: "I cannot get <mark>out of doing this laboratory duty</mark> now. <em>('get out of' is an inseparable three-part phrasal verb; the pronoun cannot be inserted in the middle).</em>" },
+          { key: "B", text: "out of it", correct: true, note: "Correct! In the three-part phrasal verb 'get out of', the object pronoun 'it' must follow the prepositions: 'get out of it'." },
+          { key: "C", text: "out it of", note: "The fixed preposition sequence is <mark>get out of it</mark>. <em>(Pronouns cannot split 'out' and 'of').</em>" },
+          { key: "D", text: "of it out", note: "The idiomatic construction is <mark>get out of it</mark>. <em>(Inverted prepositions violate English syntax).</em>" }
+        ]
+      },
+      {
+        id: 52,
+        cefr: "B1+ (Adjective + Preposition)",
+        pre: "The judges were very impressed",
+        post: "the young programmer’s robot invention.",
+        options: [
+          { key: "A", text: "of", note: "The school teachers were very <mark>proud of the young programmer's success</mark>. <em>(The adjective 'proud' takes 'of', but 'impressed' takes 'by/with').</em>" },
+          { key: "B", text: "by", correct: true, note: "Correct! The adjective 'impressed' collocated with 'by' (or 'with') to introduce the agent or cause of admiration." },
+          { key: "C", text: "on", note: "The evaluation committee <mark>focused on the robot's inventive programming</mark>. <em>('focus' takes 'on', but 'impressed' does not).</em>" },
+          { key: "D", text: "for", note: "The panel praised the student <mark>for designing an outstanding robot</mark>. <em>('praise' takes 'for', but 'impressed' does not).</em>" }
+        ]
+      },
+      {
+        id: 53,
+        cefr: "B1+ (Habitual state: be used to)",
+        pre: "At first, waking up at 5:30 AM was difficult, but now I",
+        post: "early.",
+        options: [
+          { key: "A", text: "used to get up", note: "When I was in high school, I <mark>used to get up early every morning</mark>. <em>('used to + base verb' describes discontinued past habits, not current familiarity).</em>" },
+          { key: "B", text: "am used to getting up", correct: true, note: "Correct! 'Be used to + V-ing' expresses being accustomed to a situation in the present." },
+          { key: "C", text: "use to get up", note: "Did you <mark>use to get up early</mark> when you lived in Da Lat? <em>('use to' is used in past questions with 'did', not for present familiarity).</em>" },
+          { key: "D", text: "am used to get up", note: "Now I <mark>am used to getting up early</mark>. <em>('be used to' requires a gerund '-ing', never a bare infinitive).</em>" }
+        ]
+      },
+      {
+        id: 54,
+        cefr: "B1 (Collocations: make)",
+        pre: "Volunteering at the animal shelter allows students to",
+        post: "a positive difference in the community.",
+        options: [
+          { key: "A", text: "do", note: "Volunteering allows students to <mark>do voluntary work in the community</mark>. <em>(The expression is 'make a difference', not 'do a difference').</em>" },
+          { key: "B", text: "make", correct: true, note: "Correct! The fixed collocation is 'make a difference' (to create an impact)." },
+          { key: "C", text: "take", note: "Volunteering allows students to <mark>take part in positive community activities</mark>. <em>(We say 'take part in', not 'take a difference').</em>" },
+          { key: "D", text: "give", note: "Volunteering allows students to <mark>give support to the local animal shelter</mark>. <em>(We do not say 'give a difference').</em>" }
+        ]
+      },
+      {
+        id: 55,
+        cefr: "B1+ (Future perfect)",
+        pre: "By the year 2040, scientists believe clean technology",
+        post: "fossil fuels in public transit.",
+        options: [
+          { key: "A", text: "will replace", note: "In the coming decades, clean technology <mark>will replace older diesel buses</mark>. <em>(General future prediction, but 'By + future date' specifically calls for Future Perfect).</em>" },
+          { key: "B", text: "will have replaced", correct: true, note: "Correct! 'By + future time reference' requires the Future Perfect ('will have + V3') to show an action completed before that deadline." },
+          { key: "C", text: "is replacing", note: "Right now, clean technology <mark>is replacing older transit systems</mark>. <em>('is replacing' describes ongoing present actions).</em>" },
+          { key: "D", text: "will be replacing", note: "During that decade, technology <mark>will be replacing transit vehicles steadily</mark>. <em>(Future continuous emphasizes ongoing process rather than completion by a cutoff date).</em>" }
+        ]
+      },
+      {
+        id: 56,
+        cefr: "B1 (Prepositional phrases)",
+        pre: "The museum tickets run out fast, so it is wise to book them",
+        post: "advance.",
+        options: [
+          { key: "A", text: "in", correct: true, note: "Correct! 'In advance' is the fixed prepositional phrase meaning beforehand or ahead of time." },
+          { key: "B", text: "at", note: "It is wise to purchase your admission passes <mark>at the museum counter</mark>. <em>(Preposition 'at' is used with locations, not 'advance').</em>" },
+          { key: "C", text: "on", note: "It is wise to reserve your admission passes <mark>on their official website</mark>. <em>(We say 'on the website', but 'in advance').</em>" },
+          { key: "D", text: "with", note: "Students can purchase admission passes <mark>with a discount card</mark>. <em>(We do not say 'with advance').</em>" }
+        ]
+      },
+      {
+        id: 57,
+        cefr: "B1+ (Defining relative clause)",
+        pre: "The instructor spoke to the student",
+        post: "won the national essay contest.",
+        options: [
+          { key: "A", text: "who had", correct: true, note: "Correct! 'Who' refers to the student (person), and the past perfect 'had won' clarifies that winning occurred before the instructor spoke." },
+          { key: "B", text: "which had", note: "The instructor read the prize essay <mark>which had won the national contest</mark>. <em>('which' refers to non-human objects, not students).</em>" },
+          { key: "C", text: "he had", note: "The instructor spoke to the student <mark>whom he had taught last semester</mark>. <em>('student he had won' lacks the relative pronoun subject needed to govern 'won').</em>" },
+          { key: "D", text: "whose", note: "The instructor congratulated the student <mark>whose essay had won the contest</mark>. <em>('whose' is possessive and must be followed by a noun, not a verb).</em>" }
+        ]
+      },
+      {
+        id: 58,
+        cefr: "B1+ (Phrasal verbs: fall out)",
+        pre: "The two childhood friends haven't talked to each other since they fell",
+        post: "over a stolen bicycle.",
+        options: [
+          { key: "A", text: "out", correct: true, note: "Correct! 'Fall out (with someone over something)' means to have a serious argument and cease friendly contact." },
+          { key: "B", text: "off", note: "The boy slipped on the wet grass and <mark>fell off his bicycle</mark>. <em>('fall off' is physical dismounting or tumbling).</em>" },
+          { key: "C", text: "away", note: "Over decades of distance, their old childhood connections gradually <mark>fell away</mark>. <em>('fall away' means to diminish or detach).</em>" },
+          { key: "D", text: "through", note: "Their plans to open a bicycle repair shop <mark>fell through due to lack of funds</mark>. <em>('fall through' means a plan failed to happen).</em>" }
+        ]
+      },
+      {
+        id: 59,
+        cefr: "B1+ (Mixed conditional)",
+        pre: "She",
+        post: "such a fluent speaker today if she hadn't lived abroad during her childhood.",
+        options: [
+          { key: "A", text: "won't be", note: "She <mark>won't be able to deliver her speech today</mark> if she arrives late. <em>('won't be' belongs to a First Conditional, not paired with past condition 'hadn't lived').</em>" },
+          { key: "B", text: "wouldn't be", correct: true, note: "Correct! Mixed Conditional (past condition, present result): 'If + had not lived [past], she would not be [present state today]'." },
+          { key: "C", text: "wouldn't have been", note: "She <mark>wouldn't have been accepted into the university last year</mark> if she hadn't lived abroad. <em>('wouldn't have been' specifies a completed past outcome, whereas 'today' anchors the result in the present).</em>" },
+          { key: "D", text: "hadn't been", note: "If she <mark>hadn't been an eager student during childhood</mark>, she wouldn't have learned French. <em>('hadn't been' is a past condition clause, not a main result clause).</em>" }
+        ]
+      },
+      {
+        id: 60,
+        cefr: "B1+ (Idiomatic expressions)",
+        pre: "Solving that introductory crossword was completely effortless; it",
+        post: "!",
+        options: [
+          { key: "A", text: "was a piece of cake", correct: true, note: "Correct! 'A piece of cake' is an idiom describing a task that is exceptionally easy or effortless." },
+          { key: "B", text: "broke the ice", note: "Playing a friendly team game at the start of camp <mark>broke the ice among new classmates</mark>. <em>('break the ice' means overcoming social awkwardness).</em>" },
+          { key: "C", text: "was out of the blue", note: "Receiving a handwritten letter from him after ten years <mark>was completely out of the blue</mark>. <em>('out of the blue' means completely unexpected).</em>" },
+          { key: "D", text: "cost an arm and a leg", note: "Purchasing that limited edition designer coat <mark>cost an arm and a leg</mark>. <em>('cost an arm and a leg' means extremely expensive).</em>" }
+        ]
+      }
+    ];
+
+    // State Variables
+    let currentIndex = 0;
+
+    // DOM Elements
+    const qNumBadge = document.getElementById("qNumBadge");
+    const cefrBadge = document.getElementById("cefrBadge");
+    const jumpSelect = document.getElementById("jumpSelect");
+    const sentenceBox = document.getElementById("sentenceBox");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const fontSlider = document.getElementById("fontSlider");
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+
+    // Populate Jump-to Select
+    function initJumpSelect() {
+      jumpSelect.innerHTML = "";
+      questionsData.forEach((q, idx) => {
+        const opt = document.createElement("option");
+        opt.value = idx;
+        const correctChoice = q.options.find(o => o.correct);
+        opt.textContent = `Question: ${q.id}`;
+        jumpSelect.appendChild(opt);
+      });
+    }
+
+    // Render Question Slide
+    function renderQuestion() {
+      const q = questionsData[currentIndex];
+
+      // Update Badges & Jump Dropdown
+      qNumBadge.textContent = `Question ${q.id} of ${questionsData.length}`;
+      cefrBadge.textContent = q.cefr;
+      jumpSelect.value = currentIndex;
+
+      // Reset Feedback Box
+      feedbackBox.className = "feedback-box";
+      feedbackBox.innerHTML = "";
+
+      // Render Sentence
+      sentenceBox.innerHTML = `
+        <span>${escapeHtml(q.pre)}</span>
+        <span class="blank-slot" id="blankSlot">________</span>
+        <span>${escapeHtml(q.post)}</span>
+      `;
+
+      // Render Options
+      optionsContainer.innerHTML = "";
+      q.options.forEach((opt) => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.setAttribute("data-key", opt.key);
+        btn.innerHTML = `
+          <div class="option-badge">${opt.key}</div>
+          <div class="option-text">${escapeHtml(opt.text)}</div>
+        `;
+        btn.addEventListener("click", () => handleOptionClick(opt));
+        optionsContainer.appendChild(btn);
+      });
+
+      // Update Navigation Buttons
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === questionsData.length - 1;
+    }
+
+    // Handle Option Selection
+    function handleOptionClick(opt) {
+      const blankSlot = document.getElementById("blankSlot");
+      const buttons = optionsContainer.querySelectorAll(".option-btn");
+
+      // Reset active states on option buttons
+      buttons.forEach(btn => {
+        btn.classList.remove("state-correct", "state-distractor");
+      });
+
+      const clickedBtn = optionsContainer.querySelector(`[data-key="${opt.key}"]`);
+
+      if (opt.correct) {
+        // Correct Answer: Slot word into the blank with green highlight
+        blankSlot.textContent = opt.text;
+        blankSlot.className = "blank-slot correct-filled";
+        if (clickedBtn) clickedBtn.classList.add("state-correct");
+
+        feedbackBox.className = "feedback-box show-correct";
+        feedbackBox.innerHTML = `
+          <div class="feedback-title">✓ Correct!</div>
+          <div>${opt.note}</div>
+        `;
+      } else {
+        // Distractor: Show highlighted example sentence demonstrating proper usage
+        if (clickedBtn) clickedBtn.classList.add("state-distractor");
+
+        feedbackBox.className = "feedback-box show-distractor";
+        feedbackBox.innerHTML = `
+          <div class="feedback-title">💡 How to use "${escapeHtml(opt.text)}" correctly:</div>
+          <div>${opt.note}</div>
+        `;
+      }
+    }
+
+    // Helper: Escape HTML
+    function escapeHtml(text) {
+      return text.replace(/[&<>"']/g, function(m) {
+        return {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        }[m];
+      });
+    }
+
+    // Navigation Listeners
+    prevBtn.addEventListener("click", () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderQuestion();
+      }
+    });
+
+    nextBtn.addEventListener("click", () => {
+      if (currentIndex < questionsData.length - 1) {
+        currentIndex++;
+        renderQuestion();
+      }
+    });
+
+    resetBtn.addEventListener("click", renderQuestion);
+
+    jumpSelect.addEventListener("change", (e) => {
+      currentIndex = parseInt(e.target.value, 10);
+      renderQuestion();
+    });
+
+    // Master Scale Slider: Updates sentence, answers, and examples proportionally
+    fontSlider.addEventListener("input", (e) => {
+      const val = e.target.value;
+      document.documentElement.style.setProperty("--question-size", `${val / 14}rem`);
+    });
+
+    // Dark / Light Mode Switch
+    themeToggleBtn.addEventListener("click", () => {
+      const currentTheme = document.documentElement.getAttribute("data-theme");
+      const newTheme = currentTheme === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", newTheme);
+      themeToggleBtn.innerHTML = newTheme === "dark" ? "<span>🌙 Dark</span>" : "<span>☀️ Light</span>";
+    });
+
+    // Keyboard Shortcuts (Arrow keys & 1-4 / A-D)
+    window.addEventListener("keydown", (e) => {
+      if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+
+      if (e.key === "ArrowLeft") {
+        if (currentIndex > 0) {
+          currentIndex--;
+          renderQuestion();
+        }
+      } else if (e.key === "ArrowRight") {
+        if (currentIndex < questionsData.length - 1) {
+          currentIndex++;
+          renderQuestion();
+        }
+      } else {
+        const keyMap = { "1": "A", "2": "B", "3": "C", "4": "D", "a": "A", "b": "B", "c": "C", "d": "D" };
+        const mapped = keyMap[e.key.toLowerCase()];
+        if (mapped) {
+          const q = questionsData[currentIndex];
+          const matchedOpt = q.options.find(o => o.key === mapped);
+          if (matchedOpt) handleOptionClick(matchedOpt);
+        }
+      }
+    });
+
+    // Initialize App
+    initJumpSelect();
+    renderQuestion();
+  </script>
+</body>
+</html>
