@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speaking Analysis: Khuê Anh — Visitor from Canada</title>
+  <style>
+    :root {
+      --font-scale: 16px;
+      --bg-primary: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-surface-alt: #f1f5f9;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --accent: #0284c7;
+      --error-bg: #fef2f2;
+      --error-border: #fecaca;
+      --error-text: #b91c1c;
+      --warning-bg: #fffbeb;
+      --warning-border: #fef3c7;
+      --warning-text: #b45309;
+      --success-bg: #f0fdf4;
+      --success-border: #bbf7d0;
+      --success-text: #15803d;
+      --info-bg: #f0f9ff;
+      --info-border: #bae6fd;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -2px rgba(0,0,0,0.04);
+      --card-radius: 12px;
+      --transition: all 0.2s ease-in-out;
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #090d16;
+      --bg-surface: #111827;
+      --bg-surface-alt: #1f2937;
+      --border-color: #374151;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --primary: #3b82f6;
+      --primary-hover: #60a5fa;
+      --primary-light: #1e293b;
+      --accent: #38bdf8;
+      --error-bg: #450a0a;
+      --error-border: #7f1d1d;
+      --error-text: #fca5a5;
+      --warning-bg: #451a03;
+      --warning-border: #78350f;
+      --warning-text: #fcd34d;
+      --success-bg: #052e16;
+      --success-border: #14532d;
+      --success-text: #86efac;
+      --info-bg: #082f49;
+      --info-border: #0c4a6e;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: var(--font-scale);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 1.5rem 1rem 5rem;
+      transition: background-color 0.25s, color 0.25s;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Sticky Control Header */
+    .controls-wrapper {
+      position: sticky;
+      top: 0.75rem;
+      z-index: 100;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow);
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+    }
+
+    .slider-control {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .slider-control input[type="range"] {
+      width: 100px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .btn-toggle {
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .btn-toggle:hover {
+      background: var(--border-color);
+    }
+
+    /* Header Profile Card */
+    .overview-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      padding: 1.75rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .overview-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .overview-title h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .overview-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
+    }
+
+    .badge-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    .badge-primary { background: var(--primary-light); color: var(--primary); }
+    .badge-warning { background: var(--warning-bg); color: var(--warning-text); border: 1px solid var(--warning-border); }
+    .badge-success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+    .badge-danger  { background: var(--error-bg); color: var(--error-text); border: 1px solid var(--error-border); }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .metric-box {
+      background: var(--bg-surface-alt);
+      border-radius: 10px;
+      padding: 1rem;
+      border-left: 4px solid var(--primary);
+    }
+
+    .metric-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .metric-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-filter {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.45rem 1rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .btn-filter.active, .btn-filter:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    /* Sentence Cards */
+    .sentence-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--card-radius);
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .sentence-card.has-error {
+      border-left: 5px solid #f59e0b;
+    }
+
+    .sentence-card.is-perfect {
+      border-left: 5px solid #10b981;
+    }
+
+    .sentence-card-header {
+      background: var(--bg-surface-alt);
+      padding: 0.65rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      divide-x: 1px solid var(--border-color);
+    }
+
+    @media (max-width: 768px) {
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .side-col {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+
+    .col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .col-title {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .sentence-text {
+      font-size: 1.05em;
+      line-height: 1.6;
+    }
+
+    /* Diff Styling */
+    .highlight-err {
+      background: rgba(239, 68, 68, 0.18);
+      color: var(--error-text);
+      font-weight: 700;
+      border-bottom: 2px dashed #ef4444;
+      padding: 0 3px;
+      border-radius: 3px;
+    }
+
+    .highlight-missing {
+      text-decoration: line-through;
+      color: #94a3b8;
+      margin-right: 2px;
+    }
+
+    .highlight-target {
+      color: var(--primary);
+      font-weight: 700;
+      border-bottom: 2px solid var(--primary);
+      padding: 0 2px;
+    }
+
+    /* Play Audio Buttons */
+    .audio-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-play {
+      background: var(--bg-surface-alt);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: var(--transition);
+    }
+
+    .btn-play:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .btn-play.playing {
+      background: #10b981;
+      color: #ffffff;
+      border-color: #10b981;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .btn-info {
+      background: var(--info-bg);
+      border: 1px solid var(--info-border);
+      color: var(--accent);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: var(--transition);
+      margin-left: auto;
+    }
+
+    .btn-info:hover {
+      background: var(--accent);
+      color: #ffffff;
+    }
+
+    /* Expandable Remedial Panel */
+    .info-panel {
+      display: none;
+      background: var(--info-bg);
+      border-top: 1px solid var(--info-border);
+      padding: 1.25rem;
+      font-size: 0.92rem;
+    }
+
+    .info-panel.open {
+      display: block;
+      animation: fadeIn 0.2s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .info-header {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .info-section {
+      margin-bottom: 0.75rem;
+    }
+
+    .info-section strong {
+      color: var(--primary);
+    }
+
+    .phonics-tip {
+      background: var(--bg-surface);
+      border-left: 3px solid var(--accent);
+      padding: 0.6rem 0.85rem;
+      border-radius: 0 6px 6px 0;
+      margin-top: 0.5rem;
+      font-size: 0.88rem;
+    }
+
+    /* Fixed Active Floating Player Indicator */
+    .now-playing-bar {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      display: none;
+      align-items: center;
+      gap: 1rem;
+      z-index: 1000;
+      font-size: 0.88rem;
+    }
+
+    .now-playing-bar.active {
+      display: flex;
+    }
+
+    .btn-stop-audio {
+      background: #ef4444;
+      border: none;
+      color: white;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body data-theme="light">
+
+  <audio id="studentAudio" src="KHUE ANH.wav" preload="auto"></audio>
+  <audio id="standardAudio" src="VISITOR FROM CANADA.wav" preload="auto"></audio>
+
+  <div class="container">
+
+    <!-- Sticky Toolbar -->
+    <div class="controls-wrapper">
+      <div class="brand-title">
+        <span>🎧</span> Speaking Analysis Cockpit
+      </div>
+      <div class="controls-group">
+        <div class="slider-control">
+          <span>A-</span>
+          <input type="range" id="fontSlider" min="14" max="22" value="16" />
+          <span>A+</span>
+          <span id="fontDisplay" style="margin-left: 4px; font-weight:600;">16px</span>
+        </div>
+        <button class="btn-toggle" id="themeToggle">
+          <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Student Diagnostic Summary -->
+    <div class="overview-card">
+      <div class="overview-header">
+        <div class="overview-title">
+          <h1>Student Speaking Report: Khuê Anh</h1>
+          <div class="overview-subtitle">
+            Passage: <strong>"Visitor from Canada"</strong> • Target: Fluent Sight-Reading & Clear Ending Sounds
+          </div>
+        </div>
+        <div class="badge-pills">
+          <span class="badge badge-primary">Level: High A2 / B1 Threshold</span>
+          <span class="badge badge-warning">Recorded: 04:17.20</span>
+          <span class="badge badge-success">Standard Pace: 01:48.83</span>
+        </div>
+      </div>
+
+      <p style="color: var(--text-muted); font-size: 0.95rem;">
+        Khuê Anh demonstrates a calm, steady rhythm and a clear vocal tone throughout the story. The primary areas for coaching are <strong>past-tense <em>-ed</em> endings</strong>, <strong>plural/possessive <em>-s</em> sounds</strong>, and <strong>decoding longer multi-syllable words</strong> without guessing.
+      </p>
+
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <div class="metric-val" style="color: #10b981;">7.0 / 10</div>
+          <div class="metric-label">Fluency & Rhythm (Steady pace, low false starts)</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val" style="color: #f59e0b;">6.5 / 10</div>
+          <div class="metric-label">Pronunciation (Clear vowels; endings need drill)</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val" style="color: #6366f1;">5.5 / 10</div>
+          <div class="metric-label">Morphological Control (Regular -ed & plural -s)</div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-val" style="color: #ec4899;">6.0 / 10</div>
+          <div class="metric-label">Sight-Reading Accuracy (Chunk decoding)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Buttons -->
+    <div class="filter-bar">
+      <div class="filter-buttons">
+        <button class="btn-filter active" data-filter="all">All Sentences (31)</button>
+        <button class="btn-filter" data-filter="errors">Sentences Needing Practice (24)</button>
+        <button class="btn-filter" data-filter="perfect">Accurate / Perfect (7)</button>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted);">
+        Click <strong>▶ Play</strong> to hear the line, or <strong>ℹ INFO</strong> for coaching advice.
+      </div>
+    </div>
+
+    <!-- Sentence Feed Container -->
+    <div id="sentencesContainer"></div>
+
+  </div>
+
+  <!-- Now Playing Floating Bar -->
+  <div class="now-playing-bar" id="nowPlayingBar">
+    <span id="nowPlayingText">Playing standard audio...</span>
+    <button class="btn-stop-audio" id="stopAudioBtn" title="Stop Audio">⏹</button>
+  </div>
+
+  <script>
+    // Complete Dataset (31 Sentences)
+    const sentences = [
+      {
+        id: 1,
+        stdText: "Visitor from Canada.",
+        stdStart: 0.08,
+        stdEnd: 1.12,
+        stuText: "<em>[Title line omitted / Not required]</em>",
+        stuStart: null,
+        stuEnd: null,
+        hasError: false,
+        errorTag: "Accurate",
+        diag: "The title line was omitted, which was completely acceptable for this assignment.",
+        fix: "Good choice to begin right with the opening narrative sentence.",
+        phonics: "Title reading is optional."
+      },
+      {
+        id: 2,
+        stdText: "My name is <span class='highlight-target'>Thao</span>.",
+        stdStart: 1.44,
+        stdEnd: 2.42,
+        stuText: "My name is <span class='highlight-err'>Tah-ow</span>.",
+        stuStart: 0.50,
+        stuEnd: 2.60,
+        hasError: false,
+        errorTag: "Phonetic Reading",
+        diag: "The student read the phonetic TTS conversion spelling 'Tah-ow' from the handout.",
+        fix: "In spoken conversation, say the Vietnamese name 'Thảo' with your natural warm tone.",
+        phonics: "Nice, clear vocal start!"
+      },
+      {
+        id: 3,
+        stdText: "When my Canadian friend Alice <span class='highlight-target'>walked</span> out of Tan Son Nhat Airport in Ho Chi Minh City, she <span class='highlight-target'>looked</span> completely exhausted.",
+        stdStart: 2.70,
+        stdEnd: 9.96,
+        stuText: "When my Canadian friend, Alice, <span class='highlight-err'>walk</span> out of... of the Tan Son Nhat Airport in Ho Chi Minh City, she <span class='highlight-err'>look</span> completely exhausted.",
+        stuStart: 3.20,
+        stuEnd: 18.80,
+        hasError: true,
+        errorTag: "Dropped -ed / Stutter",
+        diag: "1. The past-tense endings were dropped on 'walked' and 'looked'.<br>2. Minor stutter repetition: 'of... of the'.<br>3. Extraneous article: 'the' Tan Son Nhat Airport.",
+        fix: "Make sure to pronounce the past-tense /t/ sound at the end of both verbs: say <strong>walk-t</strong> and <strong>look-t</strong>. English airport names don't use 'the'.",
+        phonics: "Rule: When verbs end in unvoiced sounds like /k/, -ed is pronounced as a crisp /t/!"
+      },
+      {
+        id: 4,
+        stdText: "A long flight delay <span class='highlight-target'>made</span> her trip very tiring, and her heavy luggage was hard to carry.",
+        stdStart: 10.38,
+        stdEnd: 14.32,
+        stuText: "A long flight delay <span class='highlight-err'>make</span> her trip very tiring, and her heavy luggage was hard to carry.",
+        stuStart: 19.20,
+        stuEnd: 29.80,
+        hasError: true,
+        errorTag: "Verb Tense",
+        diag: "The past-tense irregular verb 'made' was spoken as the present-tense 'make'.",
+        fix: "The entire story happens in the past! Be sure to use <strong>made</strong> (rhymes with <em>played</em>).",
+        phonics: "Practice: make (present) ➔ made (past with a clear /d/ sound)."
+      },
+      {
+        id: 5,
+        stdText: "Alice felt a little anxious, because she was in Vietnam for the <span class='highlight-target'>very</span> first time.",
+        stdStart: 14.74,
+        stdEnd: 18.74,
+        stuText: "Alice felt a little anxious because she was in Vietnam for <span class='highlight-err'>the first time</span>.",
+        stuStart: 30.30,
+        stuEnd: 39.00,
+        hasError: true,
+        errorTag: "Omission",
+        diag: "The intensifier 'very' was skipped before 'first time'.",
+        fix: "Read each word carefully so you don't miss descriptive words. 'The <em>very</em> first time' highlights that it was completely new to Alice.",
+        phonics: "Pronunciation of 'anxious' (<em>ANGK-shus</em>) was excellent!"
+      },
+      {
+        id: 6,
+        stdText: "But when we <span class='highlight-target'>hugged</span>, her worries went away.",
+        stdStart: 19.36,
+        stdEnd: 21.34,
+        stuText: "But when we <span class='highlight-err'>hug</span>, her worries went away.",
+        stuStart: 39.40,
+        stuEnd: 43.80,
+        hasError: true,
+        errorTag: "Dropped -ed",
+        diag: "The -ed ending was dropped from 'hugged' (pronounced as 'hug').",
+        fix: "Add a voiced /d/ sound at the end: say <strong>hug-d</strong>.",
+        phonics: "Because 'hug' ends in voiced /g/, the -ed ending is pronounced as /d/."
+      },
+      {
+        id: 7,
+        stdText: "<span class='highlight-target'>We</span> booked a car using Grab and went to my small flat, which was her accommodation for the week.",
+        stdStart: 21.70,
+        stdEnd: 26.26,
+        stuText: "<span class='highlight-err'>He</span> booked a car using Grab and went to my small flat, which was her accommodation for the week.",
+        stuStart: 44.20,
+        stuEnd: 58.20,
+        hasError: true,
+        errorTag: "Pronoun Misreading",
+        diag: "The subject pronoun 'We' was misread as 'He'.",
+        fix: "Thao and Alice did this together, so the subject is <strong>We</strong>.",
+        phonics: "Great job pronouncing the 5-syllable word 'accommodation' (<em>uh-kom-uh-DAY-shun</em>)!"
+      },
+      {
+        id: 8,
+        stdText: "The next morning, we went to District 1 for breakfast.",
+        stdStart: 26.70,
+        stdEnd: 28.86,
+        stuText: "The next morning, we went to District 1 for breakfast.",
+        stuStart: 58.60,
+        stuEnd: 64.20,
+        hasError: false,
+        errorTag: "Accurate",
+        diag: "Accurate, clean reading with natural pacing.",
+        fix: "Keep this steady pace!",
+        phonics: "Excellent pronunciation of 'District 1' and 'breakfast'."
+      },
+      {
+        id: 9,
+        stdText: "Alice was very curious about the <span class='highlight-target'>thousands</span> of <span class='highlight-target'>motorbikes</span> on the street.",
+        stdStart: 29.20,
+        stdEnd: 32.56,
+        stuText: "Alice was very curious about the <span class='highlight-err'>thousand</span> of <span class='highlight-err'>motorbike</span> on the street.",
+        stuStart: 64.80,
+        stuEnd: 74.50,
+        hasError: true,
+        errorTag: "Dropped Plural -s",
+        diag: "The plural -s endings were dropped on both 'thousands' and 'motorbikes'.",
+        fix: "There are so many bikes in Saigon! Remember to make the buzzing /z/ and /s/ endings: <strong>thousand-z</strong> and <strong>motorbike-s</strong>.",
+        phonics: "Always watch for the letter 's' on plural nouns."
+      },
+      {
+        id: 10,
+        stdText: "We sat at a <span class='highlight-target'>crowded</span> food stall to eat hot pho.",
+        stdStart: 32.90,
+        stdEnd: 35.28,
+        stuText: "We sat at a <span class='highlight-err'>crowd</span> food stall to eat hot pho.",
+        stuStart: 74.80,
+        stuEnd: 82.80,
+        hasError: true,
+        errorTag: "Adjective Truncation",
+        diag: "The participial adjective 'crowded' was spoken as the bare noun 'crowd'.",
+        fix: "The word has two beats: say <strong>crowd-ed</strong> (<em>KROW-did</em>). It describes the stall full of customers.",
+        phonics: "Words ending in 'd' get an extra '-id' sound in the suffix."
+      },
+      {
+        id: 11,
+        stdText: "Alice <span class='highlight-target'>pointed</span> at the fresh herbs and asked about every green ingredient in her bowl.",
+        stdStart: 35.62,
+        stdEnd: 39.44,
+        stuText: "Alice <span class='highlight-err'>point</span> at the fresh herbs and asked about every green ingredient in her bowl.",
+        stuStart: 83.10,
+        stuEnd: 94.00,
+        hasError: true,
+        errorTag: "Dropped -ed",
+        diag: "The past-tense ending was dropped on 'pointed' (spoken as 'point'). 'Asked' was pronounced well.",
+        fix: "Because 'point' ends with the letter 't', the -ed suffix adds a whole new syllable: say <strong>point-ed</strong> (<em>POYN-tid</em>).",
+        phonics: "Root ends in T ➔ say /ɪd/!"
+      },
+      {
+        id: 12,
+        stdText: "The hot soup was very delicious.",
+        stdStart: 39.74,
+        stdEnd: 41.32,
+        stuText: "<span class='highlight-err'>The hot soup...</span> The hot soup was very delicious.",
+        stuStart: 94.40,
+        stuEnd: 103.50,
+        hasError: true,
+        errorTag: "False Start",
+        diag: "Repetition / false start at the beginning of the sentence.",
+        fix: "Take a breath before speaking. Trust your eyes and speak smoothly in one go!",
+        phonics: "Your pronunciation of 'delicious' (<em>dih-LISH-us</em>) was lovely."
+      },
+      {
+        id: 13,
+        stdText: "When the cook offered us sweet iced coffee, Alice could not refuse.",
+        stdStart: 41.58,
+        stdEnd: 45.12,
+        stuText: "When the cook offered us sweet iced coffee, Alice could not refuse.",
+        stuStart: 103.90,
+        stuEnd: 113.80,
+        hasError: false,
+        errorTag: "Accurate",
+        diag: "Accurate reading with good intonation and rhythm.",
+        fix: "Great performance on this compound sentence.",
+        phonics: "'Offered' and 'refuse' were pronounced clearly."
+      },
+      {
+        id: 14,
+        stdText: "Later, we went shopping at Ben Thanh Market.",
+        stdStart: 45.54,
+        stdEnd: 47.68,
+        stuText: "Later, we went shopping at Ben Thanh Market.",
+        stuStart: 114.20,
+        stuEnd: 119.60,
+        hasError: false,
+        errorTag: "Accurate",
+        diag: "Fluent and accurate reading.",
+        fix: "Keep this clear confidence!",
+        phonics: "Natural phrasing."
+      },
+      {
+        id: 15,
+        stdText: "Alice <span class='highlight-target'>wanted</span> to buy a pretty shirt.",
+        stdStart: 48.00,
+        stdEnd: 49.50,
+        stuText: "Alice <span class='highlight-err'>want</span> to buy a pretty shirt.",
+        stuStart: 120.00,
+        stuEnd: 125.20,
+        hasError: true,
+        errorTag: "Dropped -ed",
+        diag: "The -ed ending was dropped on 'wanted' (spoken as 'want').",
+        fix: "Just like 'pointed', 'want' ends in 't', so say two beats: <strong>want-ed</strong> (<em>WAHN-tid</em>).",
+        phonics: "Remember: want ➔ wanted!"
+      },
+      {
+        id: 16,
+        stdText: "She tried to ask a question, but she accidentally began to interrupt the seller, who was talking <span class='highlight-target'>with</span> someone else.",
+        stdStart: 49.88,
+        stdEnd: 55.16,
+        stuText: "She tried to ask a question, but she accidentally began to interrupt the seller who was talking <span class='highlight-err'>to</span> someone else.",
+        stuStart: 125.60,
+        stuEnd: 135.60,
+        hasError: false,
+        errorTag: "Minor Variation",
+        diag: "Spoke 'talking to' instead of 'talking with'. Both prepositions are completely natural in English.",
+        fix: "Excellent job sight-reading difficult words like 'accidentally' and 'interrupt'!",
+        phonics: "Very natural flow."
+      },
+      {
+        id: 17,
+        stdText: "Alice <span class='highlight-target'>turned</span> red and felt very <span class='highlight-target'>embarrassed</span>.",
+        stdStart: 55.60,
+        stdEnd: 57.78,
+        stuText: "Alice <span class='highlight-err'>turn</span> red and felt very <span class='highlight-err'>impressed</span>.",
+        stuStart: 135.90,
+        stuEnd: 142.60,
+        hasError: true,
+        errorTag: "Word Meaning Swap",
+        diag: "1. 'turned' was spoken without -ed as 'turn'.<br>2. 'embarrassed' was misread as 'impressed' (completely opposite meaning!).",
+        fix: "<strong>Embarrassed</strong> (<em>em-BARE-uhst</em>) means shy or awkward because you made a mistake (turning red!). <strong>Impressed</strong> means amazed. Say: <em>turn-d red and felt very em-BARE-uhst</em>.",
+        phonics: "Break it down: em • bar • rassed."
+      },
+      {
+        id: 18,
+        stdText: "She quickly tried to apologize using <span class='highlight-target'>a</span> few simple Vietnamese <span class='highlight-target'>words</span>.",
+        stdStart: 58.28,
+        stdEnd: 61.46,
+        stuText: "She quickly tried to apologize using <span class='highlight-err'>the</span> few simple Vietnamese <span class='highlight-err'>word</span>.",
+        stuStart: 143.00,
+        stuEnd: 152.60,
+        hasError: true,
+        errorTag: "Article & Plural",
+        diag: "1. 'a few' was read as 'the few'.<br>2. Plural -s omitted on 'words'.",
+        fix: "Use the phrase <strong>a few</strong> (meaning some / several), and make sure to pronounce the /z/ ending on <strong>words</strong>.",
+        phonics: "Pronounce: word-z."
+      },
+      {
+        id: 19,
+        stdText: "Luckily, the seller was very patient and smiled.",
+        stdStart: 61.80,
+        stdEnd: 64.06,
+        stuText: "Luckily, the seller was very patient and smiled.",
+        stuStart: 153.00,
+        stuEnd: 158.60,
+        hasError: false,
+        errorTag: "Accurate",
+        diag: "Clean and accurate reading with great expression.",
+        fix: "You remembered the -d ending on 'smiled'!",
+        phonics: "Well done!"
+      },
+      {
+        id: 20,
+        stdText: "The seller was even generous and gave Alice a small keychain as <span class='highlight-target'>a</span> free gift.",
+        stdStart: 64.36,
+        stdEnd: 68.00,
+        stuText: "The seller was even generous and gave Alice a small keychain as <span class='highlight-err'>free gift</span>.",
+        stuStart: 159.00,
+        stuEnd: 168.60,
+        hasError: true,
+        errorTag: "Article Omission",
+        diag: "Omitted the indefinite article 'a' before 'free gift'.",
+        fix: "Remember the small connecting words: say 'as <strong>a</strong> free gift'.",
+        phonics: "Pronunciation of 'generous' (<em>JEN-er-us</em>) was great!"
+      },
+      {
+        id: 21,
+        stdText: "<span class='highlight-target'>The</span> next few <span class='highlight-target'>days</span>, we <span class='highlight-target'>decided</span> to walk and take the bus instead of using Grab <span class='highlight-target'>cars</span>.",
+        stdStart: 68.48,
+        stdEnd: 72.22,
+        stuText: "<span class='highlight-err'>Our</span> next few <span class='highlight-err'>day</span> we <span class='highlight-err'>decide</span> to walk and take the bus instead of using <span class='highlight-err'>Grab</span>.",
+        stuStart: 169.00,
+        stuEnd: 178.60,
+        hasError: true,
+        errorTag: "Multiple Deviations",
+        diag: "1. 'The' misread as 'Our'.<br>2. 'days' dropped -s.<br>3. 'decided' dropped -ed.<br>4. 'cars' was skipped at the end.",
+        fix: "Read each word in sequence: <strong>The</strong> next few <strong>day-z</strong>, we <strong>de-ci-ded</strong> (3 syllables) ... Grab <strong>cars</strong>.",
+        phonics: "de-ci-ded = dih • SY • did."
+      },
+      {
+        id: 22,
+        stdText: "Alice <span class='highlight-target'>loves</span> nature and <span class='highlight-target'>cares</span> about the environment.",
+        stdStart: 72.62,
+        stdEnd: 75.06,
+        stuText: "Alice <span class='highlight-err'>love</span> nature and <span class='highlight-err'>care</span> about the environment.",
+        stuStart: 179.00,
+        stuEnd: 184.80,
+        hasError: true,
+        errorTag: "Missing 3rd Person -s",
+        diag: "The 3rd-person singular present -s was dropped on both 'loves' and 'cares'.",
+        fix: "Alice is one person (she), so verbs in the present need an 's': Alice <strong>love-z</strong> and <strong>care-z</strong>.",
+        phonics: "He / She / Alice + Verb-s!"
+      },
+      {
+        id: 23,
+        stdText: "She <span class='highlight-target'>wanted</span> to help stop city air pollution.",
+        stdStart: 75.38,
+        stdEnd: 77.32,
+        stuText: "She <span class='highlight-err'>want</span> to help stop city air pollution.",
+        stuStart: 185.10,
+        stuEnd: 189.80,
+        hasError: true,
+        errorTag: "Dropped -ed",
+        diag: "-ed ending dropped on 'wanted'.",
+        fix: "Say two syllables: <strong>want-ed</strong> (<em>WAHN-tid</em>).",
+        phonics: "Pronunciation of 'pollution' (<em>puh-LOO-shun</em>) was spot on!"
+      },
+      {
+        id: 24,
+        stdText: "Crossing the busy <span class='highlight-target'>streets</span> was a <span class='highlight-target'>big challenge</span> for her at first.",
+        stdStart: 77.62,
+        stdEnd: 80.20,
+        stuText: "Crossing the busy <span class='highlight-err'>street</span> was a <span class='highlight-err'>bit decision</span> for her at first.",
+        stuStart: 190.10,
+        stuEnd: 196.80,
+        hasError: true,
+        errorTag: "Severe Substitution",
+        diag: "1. 'streets' dropped -s.<br>2. 'big challenge' was misread as 'bit decision'.",
+        fix: "A <strong>challenge</strong> (<em>CHAL-inj</em>) is something difficult to do! Don't guess by visual look—sound out: <em>chal • lenge</em>.",
+        phonics: "Practice the sound: big CHAL-lenge."
+      },
+      {
+        id: 25,
+        stdText: "However, walking was very <span class='highlight-target'>convenient for seeing</span> small shops in the narrow alleys.",
+        stdStart: 80.82,
+        stdEnd: 84.14,
+        stuText: "However, walking was very <span class='highlight-err'>talent to seen</span> small shops in the narrow alleys.",
+        stuStart: 197.10,
+        stuEnd: 205.80,
+        hasError: true,
+        errorTag: "Severe Decoding Breakdown",
+        diag: "'convenient for seeing' broke down into 'talent to seen'.",
+        fix: "<strong>Convenient</strong> (<em>kuhn-VEE-nyunt</em>) means handy, easy, and useful. Practice the phrase: <em>very convenient for seeing...</em>",
+        phonics: "Syllable break: con • ve • nient (kuhn-VEE-nyunt)."
+      },
+      {
+        id: 26,
+        stdText: "Soon, <span class='highlight-target'>Alice’s</span> street-crossing <span class='highlight-target'>skills</span> began to improve, showing her that hard <span class='highlight-target'>things</span> get easier with practice.",
+        stdStart: 84.64,
+        stdEnd: 90.30,
+        stuText: "Soon, <span class='highlight-err'>Alice</span> street crossing <span class='highlight-err'>skill</span> began to improve, showing her that hard <span class='highlight-err'>thing</span> get easier with practice.",
+        stuStart: 206.10,
+        stuEnd: 217.60,
+        hasError: true,
+        errorTag: "Dropped Possessive & Plural -s",
+        diag: "1. Possessive 's dropped on 'Alice's'.<br>2. Plural -s dropped on 'skills' and 'things'.",
+        fix: "When talking about Alice's skills, say: <strong>Alice's</strong> (<em>AL-iss-iz</em>). And add the -s to <strong>skill-z</strong> and <strong>thing-z</strong>.",
+        phonics: "Names ending in S add /ɪz/: Alice ➔ Alice's (AL-iss-iz)."
+      },
+      {
+        id: 27,
+        stdText: "Too soon, the day of <span class='highlight-target'>Alice’s</span> departure came.",
+        stdStart: 90.66,
+        stdEnd: 93.42,
+        stuText: "<span class='highlight-err'>Too soon...</span> Too soon, the day of <span class='highlight-err'>Alice</span> departure came.",
+        stuStart: 218.00,
+        stuEnd: 224.80,
+        hasError: true,
+        errorTag: "Repetition & Possessive 's",
+        diag: "1. False start repetition: 'Too soon... Too soon'.<br>2. Possessive 's dropped on 'Alice's'.",
+        fix: "Take your time and say: 'the day of <strong>Alice's</strong> (<em>AL-iss-iz</em>) departure'.",
+        phonics: "Great pronunciation of the formal word 'departure' (<em>dih-PAR-cher</em>)!"
+      },
+      {
+        id: 28,
+        stdText: "We were sad and disappointed that <span class='highlight-target'>our trip was over so fast</span>.",
+        stdStart: 93.84,
+        stdEnd: 96.34,
+        stuText: "We were sad and disappointed that <span class='highlight-err'>her trip was too fast</span>.",
+        stuStart: 225.10,
+        stuEnd: 231.80,
+        hasError: true,
+        errorTag: "Paraphrase / Substitution",
+        diag: "Substituted 'our trip was over so fast' with 'her trip was too fast'.",
+        fix: "The meaning is very close, but during a reading test, stick to the text: <strong>our trip was over so fast</strong>.",
+        phonics: "Excellent emotional tone and pronunciation of 'disappointed'!"
+      },
+      {
+        id: 29,
+        stdText: "But we <span class='highlight-target'>were</span> also very satisfied with the fun time we had together.",
+        stdStart: 96.80,
+        stdEnd: 99.48,
+        stuText: "But we <span class='highlight-err'>[were omitted]</span> also very satisfied with the fun time we had together.",
+        stuStart: 232.10,
+        stuEnd: 239.00,
+        hasError: true,
+        errorTag: "Auxiliary Verb Omission",
+        diag: "The past auxiliary verb 'were' was omitted ('we also very satisfied').",
+        fix: "In English sentences describing feelings, don't drop the verb 'to be': say 'we <strong>were</strong> also very satisfied'.",
+        phonics: "'Satisfied' (<em>SAT-iss-fyde</em>) was articulated clearly!"
+      },
+      {
+        id: 30,
+        stdText: "We drank one last milk tea to celebrate our great week.",
+        stdStart: 99.76,
+        stdEnd: 102.18,
+        stuText: "We drank one last milk tea to celebrate our great week.",
+        stuStart: 239.50,
+        stuEnd: 245.80,
+        hasError: false,
+        errorTag: "Accurate",
+        diag: "Flawless reading! Great pacing, natural pitch, and clear past tense.",
+        fix: "Wonderful sentence!",
+        phonics: "Clear /k/ and /t/ sounds in 'drank' and 'celebrate'."
+      },
+      {
+        id: 31,
+        stdText: "At the airport, Alice told me this trip <span class='highlight-target'>helped</span> her discover that trying new <span class='highlight-target'>things</span> is fun if you stay brave and smile.",
+        stdStart: 102.72,
+        stdEnd: 108.83,
+        stuText: "At the airport, Alice told me this trip <span class='highlight-err'>help</span> her discover that trying new <span class='highlight-err'>thing</span> is fun if you stay brave and smile.",
+        stuStart: 246.10,
+        stuEnd: 257.20,
+        hasError: true,
+        errorTag: "Dropped -ed & -s",
+        diag: "1. 'helped' was spoken without -ed as 'help'.<br>2. 'things' dropped plural -s.",
+        fix: "Finish strong with all your ending sounds: say <strong>help-t</strong> and <strong>thing-z</strong>!",
+        phonics: "Help ends in /p/, so -ed sounds like a crisp /t/: help-t!"
+      }
+    ];
+
+    // Audio Playback Engine
+    const studentAudio = document.getElementById('studentAudio');
+    const standardAudio = document.getElementById('standardAudio');
+    const nowPlayingBar = document.getElementById('nowPlayingBar');
+    const nowPlayingText = document.getElementById('nowPlayingText');
+    const stopAudioBtn = document.getElementById('stopAudioBtn');
+
+    let currentPlayingBtn = null;
+    let playbackInterval = null;
+
+    function stopAllAudio() {
+      if (playbackInterval) {
+        clearInterval(playbackInterval);
+        playbackInterval = null;
+      }
+      studentAudio.pause();
+      standardAudio.pause();
+      if (currentPlayingBtn) {
+        currentPlayingBtn.classList.remove('playing');
+        currentPlayingBtn.innerHTML = currentPlayingBtn.getAttribute('data-default-html');
+        currentPlayingBtn = null;
+      }
+      nowPlayingBar.classList.remove('active');
+    }
+
+    stopAudioBtn.addEventListener('click', stopAllAudio);
+
+    function playSnippet(type, startSec, endSec, btn) {
+      if (currentPlayingBtn === btn) {
+        stopAllAudio();
+        return;
+      }
+
+      stopAllAudio();
+
+      if (startSec === null || endSec === null) {
+        alert("This sentence has no corresponding audio snippet.");
+        return;
+      }
+
+      const audio = (type === 'student') ? studentAudio : standardAudio;
+      const label = (type === 'student') ? "Khuê Anh" : "Standard Model";
+
+      audio.currentTime = startSec;
+      audio.play().then(() => {
+        currentPlayingBtn = btn;
+        btn.setAttribute('data-default-html', btn.innerHTML);
+        btn.classList.add('playing');
+        btn.innerHTML = `<span>⏹ Stop</span>`;
+
+        nowPlayingText.textContent = `Playing ${label} (${formatTime(startSec)} – ${formatTime(endSec)})`;
+        nowPlayingBar.classList.add('active');
+
+        playbackInterval = setInterval(() => {
+          if (audio.currentTime >= endSec || audio.paused) {
+            stopAllAudio();
+          }
+        }, 50);
+      }).catch(err => {
+        console.error("Audio playback error:", err);
+        alert(`Could not play ${type === 'student' ? 'KHUE ANH.wav' : 'VISITOR FROM CANADA.wav'}. Make sure the file is in the same folder as this HTML file!`);
+        stopAllAudio();
+      });
+    }
+
+    function formatTime(seconds) {
+      if (seconds === null || isNaN(seconds)) return "--:--";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      const ms = Math.floor((seconds % 1) * 10);
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${ms}`;
+    }
+
+    // Render Sentences
+    const container = document.getElementById('sentencesContainer');
+
+    function renderSentences(filter = 'all') {
+      container.innerHTML = '';
+
+      sentences.forEach(item => {
+        if (filter === 'errors' && !item.hasError) return;
+        if (filter === 'perfect' && item.hasError) return;
+
+        const card = document.createElement('div');
+        card.className = `sentence-card ${item.hasError ? 'has-error' : 'is-perfect'}`;
+        card.id = `sentence-${item.id}`;
+
+        const badgeClass = item.hasError ? 'badge-warning' : 'badge-success';
+
+        card.innerHTML = `
+          <div class="sentence-card-header">
+            <div><strong>Sentence #${item.id}</strong></div>
+            <div><span class="badge ${badgeClass}">${item.errorTag}</span></div>
+          </div>
+          <div class="comparison-grid">
+            <!-- Standard Side -->
+            <div class="side-col" style="background: var(--bg-surface);">
+              <div>
+                <div class="col-header">
+                  <div class="col-title"><span>📘</span> Target Script</div>
+                  <div>${formatTime(item.stdStart)} – ${formatTime(item.stdEnd)}</div>
+                </div>
+                <div class="sentence-text" style="margin-top: 0.6rem;">
+                  ${item.stdText}
+                </div>
+              </div>
+              <div class="audio-actions">
+                <button class="btn-play" onclick="playSnippet('standard', ${item.stdStart}, ${item.stdEnd}, this)">
+                  <span>▶ Play Standard</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Student Side -->
+            <div class="side-col" style="background: var(--bg-surface-alt);">
+              <div>
+                <div class="col-header">
+                  <div class="col-title"><span>🎙️</span> Khuê Anh's Reading</div>
+                  <div>${formatTime(item.stuStart)} – ${formatTime(item.stuEnd)}</div>
+                </div>
+                <div class="sentence-text" style="margin-top: 0.6rem;">
+                  ${item.stuText}
+                </div>
+              </div>
+              <div class="audio-actions">
+                ${item.stuStart !== null ? `
+                  <button class="btn-play" onclick="playSnippet('student', ${item.stuStart}, ${item.stuEnd}, this)">
+                    <span>▶ Play Khuê Anh</span>
+                  </button>
+                ` : `<span style="font-size:0.8rem; color:var(--text-muted); font-style:italic;">No student audio</span>`}
+                <button class="btn-info" onclick="toggleInfo(${item.id})">
+                  <span>ℹ️ Advice</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expandable Remedial Coaching Info -->
+          <div class="info-panel" id="info-${item.id}">
+            <div class="info-header">
+              <span>💡</span> Coach's Explanation & Phonics Guide
+            </div>
+            <div class="info-section">
+              <strong>What Happened:</strong> ${item.diag}
+            </div>
+            <div class="info-section">
+              <strong>How to Say It Correctly:</strong> ${item.fix}
+            </div>
+            <div class="phonics-tip">
+              <strong>Tip for Khuê Anh:</strong> ${item.phonics}
+            </div>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function toggleInfo(id) {
+      const panel = document.getElementById(`info-${id}`);
+      if (panel) {
+        panel.classList.toggle('open');
+      }
+    }
+
+    // Filter Buttons logic
+    document.querySelectorAll('.btn-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderSentences(btn.getAttribute('data-filter'));
+      });
+    });
+
+    // Font Slider logic
+    const fontSlider = document.getElementById('fontSlider');
+    const fontDisplay = document.getElementById('fontDisplay');
+
+    fontSlider.addEventListener('input', (e) => {
+      const sz = e.target.value;
+      document.documentElement.style.setProperty('--font-scale', `${sz}px`);
+      fontDisplay.textContent = `${sz}px`;
+    });
+
+    // Dark/Light Mode logic
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+
+    function setTheme(theme) {
+      document.body.setAttribute('data-theme', theme);
+      if (theme === 'dark') {
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+      } else {
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+      }
+      localStorage.setItem('speaking_analysis_theme', theme);
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const current = document.body.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // Initialize Theme & Render
+    const savedTheme = localStorage.getItem('speaking_analysis_theme') || 'light';
+    setTheme(savedTheme);
+    renderSentences('all');
+  </script>
+</body>
+</html>
