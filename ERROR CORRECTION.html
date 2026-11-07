@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vietnam Everyday Grammar | A2 Flashcards</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* 3D Card Flip Mechanics */
+    .perspective-container {
+      perspective: 1200px;
+    }
+    .flashcard-inner {
+      transform-style: preserve-3d;
+      transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .flashcard-inner.flipped {
+      transform: rotateY(180deg);
+    }
+    .flashcard-face {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .flashcard-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Custom range slider styling */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: transparent;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 6px;
+      cursor: pointer;
+      background: #e2e8f0;
+      border-radius: 9999px;
+    }
+    .dark input[type=range]::-webkit-slider-runnable-track {
+      background: #334155;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: #0f172a;
+      cursor: pointer;
+      -webkit-appearance: none;
+      margin-top: -6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .dark input[type=range]::-webkit-slider-thumb {
+      background: #f8fafc;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.18);
+    }
+
+    /* Disable unwanted text select during rapid card clicking */
+    .no-select {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+  </style>
+</head>
+<body class="h-full bg-stone-100/70 text-stone-800 dark:bg-[#0c0d0e] dark:text-stone-100 flex flex-col font-sans transition-colors duration-300 antialiased selection:bg-emerald-500 selection:text-white">
+
+  <!-- Top Progress Bar -->
+  <div class="w-full bg-stone-200 dark:bg-stone-800/80 h-1.5 shrink-0">
+    <div id="progressBar" class="bg-emerald-600 dark:bg-emerald-400 h-1.5 transition-all duration-300 ease-out" style="width: 2.08%;"></div>
+  </div>
+
+  <!-- Header Controls Bar -->
+  <header class="w-full max-w-4xl mx-auto px-4 py-3 sm:py-4 flex items-center justify-between shrink-0 gap-3 border-b border-stone-200/80 dark:border-stone-800/70">
+    <!-- Left: Activity Title & Counter Badge -->
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold tracking-wide uppercase bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/50">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        Vietnam A2
+      </span>
+      <span id="counterBadge" class="text-xs sm:text-sm font-semibold text-stone-500 dark:text-stone-400 font-mono tracking-tight">
+        1 / 48
+      </span>
+    </div>
+
+    <!-- Center/Right: Sliding Text Size UX & Action Tools -->
+    <div class="flex items-center gap-2 sm:gap-5">
+      <!-- Text Size Slider UX -->
+      <div class="flex items-center gap-2 bg-white/80 dark:bg-stone-900/90 px-3 py-1.5 rounded-full border border-stone-200 dark:border-stone-800 shadow-sm">
+        <span class="text-xs font-bold text-stone-400 dark:text-stone-500 select-none">A</span>
+        <input 
+          id="fontSizeSlider" 
+          type="range" 
+          min="20" 
+          max="48" 
+          value="32" 
+          step="2" 
+          aria-label="Adjust font size" 
+          class="w-16 sm:w-28 accent-stone-900 dark:accent-stone-100"
+        />
+        <span class="text-base font-bold text-stone-700 dark:text-stone-300 select-none">A</span>
+      </div>
+
+      <!-- Shuffle Cards -->
+      <button 
+        id="shuffleBtn" 
+        title="Shuffle Sentences" 
+        aria-label="Shuffle cards"
+        class="p-2 sm:px-3 sm:py-1.5 rounded-full bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-600 transition flex items-center gap-1.5 text-xs font-semibold text-stone-600 dark:text-stone-300 shadow-sm active:scale-95"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4h4l3 5m0 0l3 5h6M4 20h4l3-5m0 0l3-5h6m0 0l-3-3m3 3l-3 3m0 6l-3-3m3 3l-3 3" />
+        </svg>
+        <span class="hidden sm:inline">Shuffle</span>
+      </button>
+
+      <!-- Dark / Light Theme Toggle -->
+      <button 
+        id="themeToggleBtn" 
+        title="Toggle Theme" 
+        aria-label="Toggle dark/light theme"
+        class="p-2 rounded-full bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-600 text-stone-600 dark:text-stone-300 transition shadow-sm active:scale-95"
+      >
+        <!-- Sun (shown in dark mode) -->
+        <svg id="sunIcon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="5" />
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+        </svg>
+        <!-- Moon (shown in light mode) -->
+        <svg id="moonIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Card Stage -->
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-4 sm:py-8 flex flex-col justify-center items-center">
+    
+    <!-- 3D Perspective Flashcard Container -->
+    <div class="perspective-container w-full h-[380px] sm:h-[420px] max-w-3xl cursor-pointer" id="cardContainer">
+      <div id="flashcardInner" class="flashcard-inner relative w-full h-full duration-500 rounded-3xl shadow-xl hover:shadow-2xl transition-shadow">
+        
+        <!-- ================= FRONT FACE (Sentence with untouched error, NOT highlighted) ================= -->
+        <div class="flashcard-face absolute inset-0 w-full h-full bg-white dark:bg-stone-900/90 rounded-3xl p-6 sm:p-10 flex flex-col justify-between border-2 border-stone-200 dark:border-stone-800">
+          
+          <!-- Top Row of Front -->
+          <div class="flex items-center justify-between no-select">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300">
+              <svg class="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+              </svg>
+              Spot The Mistake
+            </span>
+            <span class="text-xs tracking-wider text-stone-400 dark:text-stone-500 font-mono" id="frontCardNum">#1</span>
+          </div>
+
+          <!-- Sentence text (Large, Minimal, Untouched error, completely natural) -->
+          <div class="my-auto text-center px-2 py-4">
+            <p id="sentenceText" class="font-semibold text-stone-800 dark:text-stone-100 leading-relaxed tracking-tight transition-all duration-150">
+              Every morning, Nam drink a glass of warm soy milk before school.
+            </p>
+          </div>
+
+          <!-- Bottom hint -->
+          <div class="text-center no-select">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800/80 dark:hover:bg-stone-800 text-stone-500 dark:text-stone-400 text-xs sm:text-sm font-medium transition-colors">
+              <svg class="w-4 h-4 text-emerald-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>Click card or press <strong>Space</strong> to reveal correction</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= BACK FACE (Revealed Correction & Concise Grammar Note) ================= -->
+        <div class="flashcard-face flashcard-back absolute inset-0 w-full h-full bg-emerald-50/70 dark:bg-stone-900/95 rounded-3xl p-6 sm:p-10 flex flex-col justify-between border-2 border-emerald-400/80 dark:border-emerald-700/80">
+          
+          <!-- Top Row of Back -->
+          <div class="flex items-center justify-between no-select">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-600 text-white dark:bg-emerald-500 dark:text-stone-950">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+              </svg>
+              Correct Answer
+            </span>
+            <span id="errorTypeBadge" class="text-xs font-semibold px-2.5 py-1 rounded-md bg-stone-200/80 dark:bg-stone-800 text-stone-700 dark:text-stone-300">
+              Subject-Verb Agreement
+            </span>
+          </div>
+
+          <!-- Corrected Sentence with clear visual styling on the corrected segment -->
+          <div class="my-auto text-center px-2 py-2">
+            <p id="correctedText" class="font-semibold text-stone-900 dark:text-stone-50 leading-relaxed tracking-tight transition-all duration-150">
+              Every morning, Nam <span class="text-emerald-700 dark:text-emerald-400 underline decoration-emerald-500 decoration-4 underline-offset-8 font-bold">drinks</span> a glass of warm soy milk before school.
+            </p>
+
+            <!-- Explanation Callout -->
+            <div class="mt-5 inline-block text-left bg-white/90 dark:bg-stone-950/70 px-4 py-2.5 rounded-2xl border border-emerald-200 dark:border-emerald-900/60 shadow-sm max-w-xl mx-auto">
+              <div class="flex items-start gap-2.5">
+                <span class="text-emerald-600 dark:text-emerald-400 font-bold text-sm shrink-0 mt-0.5">💡 Rule:</span>
+                <span id="explanationText" class="text-xs sm:text-sm text-stone-700 dark:text-stone-300 font-medium leading-snug">
+                  Needs third-person singular "drinks" for subject Nam.
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom hint -->
+          <div class="text-center no-select">
+            <span class="inline-flex items-center gap-1.5 text-xs text-stone-500 dark:text-stone-400">
+              <svg class="w-3.5 h-3.5 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              Tap card to flip back
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Bottom Navigation & Controls Dock -->
+  <footer class="w-full max-w-4xl mx-auto px-4 py-4 sm:py-6 shrink-0 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <!-- Quick Shortcuts Legend (Desktop) -->
+    <div class="hidden sm:flex items-center gap-3 text-xs text-stone-500 dark:text-stone-400">
+      <span class="inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-stone-200 dark:bg-stone-800 rounded font-mono text-[10px]">←</kbd> Prev</span>
+      <span class="inline-flex items-center gap-1"><kbd class="px-2 py-0.5 bg-stone-200 dark:bg-stone-800 rounded font-mono text-[10px]">Space</kbd> Flip</span>
+      <span class="inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-stone-200 dark:bg-stone-800 rounded font-mono text-[10px]">→</kbd> Next</span>
+    </div>
+
+    <!-- Main Navigation Button Cluster -->
+    <div class="flex items-center justify-center gap-3 w-full sm:w-auto">
+      <!-- Previous Button -->
+      <button 
+        id="prevBtn" 
+        class="flex-1 sm:flex-initial px-5 py-3 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 hover:border-stone-400 dark:hover:border-stone-600 text-stone-700 dark:text-stone-200 font-semibold text-sm transition shadow-sm active:scale-95 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        <span>Previous</span>
+      </button>
+
+      <!-- Flip Button (Touch friendly) -->
+      <button 
+        id="flipBtn" 
+        class="px-5 py-3 rounded-2xl bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 hover:bg-stone-800 dark:hover:bg-white font-semibold text-sm transition shadow-md active:scale-95 flex items-center justify-center gap-2"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        </svg>
+        <span id="flipBtnLabel">Reveal</span>
+      </button>
+
+      <!-- Next Button -->
+      <button 
+        id="nextBtn" 
+        class="flex-1 sm:flex-initial px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm transition shadow-md active:scale-95 disabled:opacity-30 disabled:pointer-events-none flex items-center justify-center gap-2"
+      >
+        <span>Next</span>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Quick Jump to Card Input -->
+    <div class="flex items-center gap-2 text-xs font-medium text-stone-500 dark:text-stone-400">
+      <label for="jumpSelect" class="whitespace-nowrap">Jump to:</label>
+      <select 
+        id="jumpSelect" 
+        aria-label="Jump to specific sentence"
+        class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 text-xs font-semibold text-stone-700 dark:text-stone-300 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+      >
+        <!-- Populated via JS -->
+      </select>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    /**
+     * Complete Dataset: 48 Real-Life Vietnam Sentences (A2 Level)
+     * original: untouched sentence with error (NEVER bolded or highlighted on the card front)
+     * correctedHtml: marked correction for the card back
+     * errorType: concise grammar category
+     * note: brief, learner-friendly explanation
+     */
+    const rawSentences = [
+      {
+        id: 1,
+        original: "Every morning, Nam drink a glass of warm soy milk before school.",
+        correctedHtml: "Every morning, Nam <mark class='correction'>drinks</mark> a glass of warm soy milk before school.",
+        errorType: "Subject-Verb Agreement",
+        note: "Singular subject Nam requires third-person \"drinks\"."
+      },
+      {
+        id: 2,
+        original: "We always play football in the alley at Sunday afternoon.",
+        correctedHtml: "We always play football in the alley <mark class='correction'>on</mark> Sunday afternoon.",
+        errorType: "Preposition of Time",
+        note: "Use \"on\" for days of the week and specific day parts."
+      },
+      {
+        id: 3,
+        original: "My uncle buyed a new helmet at the street market yesterday.",
+        correctedHtml: "My uncle <mark class='correction'>bought</mark> a new helmet at the street market yesterday.",
+        errorType: "Irregular Past Tense",
+        note: "\"Buy\" is an irregular verb; the past simple form is \"bought\"."
+      },
+      {
+        id: 4,
+        original: "There are too many motorbike parked on the narrow sidewalk.",
+        correctedHtml: "There are too many <mark class='correction'>motorbikes</mark> parked on the narrow sidewalk.",
+        errorType: "Plural Noun",
+        note: "Countable noun after \"too many\" must be plural: \"motorbikes\"."
+      },
+      {
+        id: 5,
+        original: "Huy didn't brought his English notebook to school today.",
+        correctedHtml: "Huy didn't <mark class='correction'>bring</mark> his English notebook to school today.",
+        errorType: "Auxiliary Verb + Base Form",
+        note: "After \"didn't\", always use the base verb: \"bring\"."
+      },
+      {
+        id: 6,
+        original: "My older brother goes to secondary school with an electric bike.",
+        correctedHtml: "My older brother goes to secondary school <mark class='correction'>by</mark> electric bike.",
+        errorType: "Preposition of Transport",
+        note: "Use \"by electric bike\" (or \"on an electric bike\"), not \"with\"."
+      },
+      {
+        id: 7,
+        original: "Look! The stray dog is run right across the busy street!",
+        correctedHtml: "Look! The stray dog is <mark class='correction'>running</mark> right across the busy street!",
+        errorType: "Present Continuous",
+        note: "Action happening right now needs \"is running\" (-ing)."
+      },
+      {
+        id: 8,
+        original: "We must to stop when the traffic light turns yellow and red.",
+        correctedHtml: "We must <mark class='correction'>stop</mark> when the traffic light turns yellow and red.",
+        errorType: "Modal Verb",
+        note: "Modal verb \"must\" takes a bare infinitive: omit \"to\"."
+      },
+      {
+        id: 9,
+        original: "Phong and Minh is eating fried fish balls near the school gate.",
+        correctedHtml: "Phong and Minh <mark class='correction'>are</mark> eating fried fish balls near the school gate.",
+        errorType: "Subject-Verb Agreement",
+        note: "Compound plural subject (two people) takes \"are\"."
+      },
+      {
+        id: 10,
+        original: "It started to rain heavily, but nobody in the group had a umbrella.",
+        correctedHtml: "It started to rain heavily, but nobody in the group had <mark class='correction'>an</mark> umbrella.",
+        errorType: "Indefinite Article",
+        note: "Use \"an\" before words beginning with a vowel sound (/ʌ/ in umbrella)."
+      },
+      {
+        id: 11,
+        original: "There is so much traffics around the bridge during rush hour.",
+        correctedHtml: "There is so much <mark class='correction'>traffic</mark> around the bridge during rush hour.",
+        errorType: "Uncountable Noun",
+        note: "\"Traffic\" is uncountable; it does not have a plural \"traffics\"."
+      },
+      {
+        id: 12,
+        original: "How much goals did our class team score in the match yesterday?",
+        correctedHtml: "How <mark class='correction'>many</mark> goals did our class team score in the match yesterday?",
+        errorType: "Quantifier",
+        note: "Use \"many\" with countable plural nouns (\"goals\")."
+      },
+      {
+        id: 13,
+        original: "I want to buy two bread with grilled pork for breakfast.",
+        correctedHtml: "I want to buy <mark class='correction'>two loaves of bread</mark> (or <mark class='correction'>two bánh mì</mark>) with grilled pork for breakfast.",
+        errorType: "Uncountable / Measure Word",
+        note: "\"Bread\" is uncountable. Use \"two loaves of bread\" or \"two bánh mì\"."
+      },
+      {
+        id: 14,
+        original: "My father usually drive his scooter very slowly in the heavy rain.",
+        correctedHtml: "My father usually <mark class='correction'>drives</mark> his scooter very slowly in the heavy rain.",
+        errorType: "Subject-Verb Agreement",
+        note: "Third-person singular \"my father\" requires \"drives\"."
+      },
+      {
+        id: 15,
+        original: "This bowl of bún bò is more spicy than the one we ate yesterday.",
+        correctedHtml: "This bowl of bún bò is <mark class='correction'>spicier</mark> than the one we ate yesterday.",
+        errorType: "Comparative Adjective",
+        note: "Two-syllable adjectives ending in -y change to -ier: \"spicier\"."
+      },
+      {
+        id: 16,
+        original: "That is my teacher blue motorbike parked beside the flagpole.",
+        correctedHtml: "That is my <mark class='correction'>teacher's</mark> blue motorbike parked beside the flagpole.",
+        errorType: "Possessive Noun",
+        note: "Use an apostrophe-s (\"teacher's\") to indicate possession."
+      },
+      {
+        id: 17,
+        original: "Our neighborhood football team played very good in the final round.",
+        correctedHtml: "Our neighborhood football team played very <mark class='correction'>well</mark> in the final round.",
+        errorType: "Adjective vs. Adverb",
+        note: "Use the adverb \"well\" to modify the verb \"played\"."
+      },
+      {
+        id: 18,
+        original: "Bao enjoys to play mobile games with his cousins after dinner.",
+        correctedHtml: "Bao enjoys <mark class='correction'>playing</mark> mobile games with his cousins after dinner.",
+        errorType: "Verb Pattern (Gerund)",
+        note: "The verb \"enjoy\" is followed by a gerund (-ing): \"playing\"."
+      },
+      {
+        id: 19,
+        original: "The referee blew the whistle and gave the free kick to he.",
+        correctedHtml: "The referee blew the whistle and gave the free kick to <mark class='correction'>him</mark>.",
+        errorType: "Object Pronoun",
+        note: "Prepositions take object pronouns: use \"him\", not \"he\"."
+      },
+      {
+        id: 20,
+        original: "We stayed in home yesterday because the thunderstorm was too strong.",
+        correctedHtml: "We stayed <mark class='correction'>at home</mark> yesterday because the thunderstorm was too strong.",
+        errorType: "Preposition of Place",
+        note: "The fixed prepositional expression is \"at home\", not \"in home\"."
+      },
+      {
+        id: 21,
+        original: "Long is the most tall boy in our seventh-grade class.",
+        correctedHtml: "Long is the <mark class='correction'>tallest</mark> boy in our seventh-grade class.",
+        errorType: "Superlative Adjective",
+        note: "One-syllable adjectives take -est: \"the tallest\"."
+      },
+      {
+        id: 22,
+        original: "The traffic officer gave me a good advice about wearing a chin strap.",
+        correctedHtml: "The traffic officer gave me <mark class='correction'>good advice</mark> (or <mark class='correction'>a piece of advice</mark>) about wearing a chin strap.",
+        errorType: "Uncountable Noun",
+        note: "\"Advice\" is uncountable. Do not use the article \"a\" directly with it."
+      },
+      {
+        id: 23,
+        original: "Yesterday evening, we watch the national team win the match on TV.",
+        correctedHtml: "Yesterday evening, we <mark class='correction'>watched</mark> the national team win the match on TV.",
+        errorType: "Past Simple Tense",
+        note: "Time marker \"yesterday evening\" requires past tense: \"watched\"."
+      },
+      {
+        id: 24,
+        original: "How many money did you spend on that large cup of boba milk tea?",
+        correctedHtml: "How <mark class='correction'>much</mark> money did you spend on that large cup of boba milk tea?",
+        errorType: "Quantifier",
+        note: "\"Money\" is uncountable; use \"How much\"."
+      },
+      {
+        id: 25,
+        original: "My friend Khoa can swimming across the district pool in two minutes.",
+        correctedHtml: "My friend Khoa can <mark class='correction'>swim</mark> across the district pool in two minutes.",
+        errorType: "Modal Verb",
+        note: "Modal verb \"can\" takes a bare infinitive: \"swim\"."
+      },
+      {
+        id: 26,
+        original: "The boys was kicking a shuttlecock under the tamarind tree.",
+        correctedHtml: "The boys <mark class='correction'>were</mark> kicking a shuttlecock under the tamarind tree.",
+        errorType: "Subject-Verb Agreement",
+        note: "Plural subject \"the boys\" requires plural past verb \"were\"."
+      },
+      {
+        id: 27,
+        original: "There isn't no sugarcane juice left in the pitcher on the table.",
+        correctedHtml: "There isn't <mark class='correction'>any</mark> sugarcane juice left in the pitcher on the table.",
+        errorType: "Double Negative",
+        note: "Avoid double negatives: use \"isn't any\" or \"is no\"."
+      },
+      {
+        id: 28,
+        original: "I quickly put on my raincoat because the sky look completely dark.",
+        correctedHtml: "I quickly put on my raincoat because the sky <mark class='correction'>looks</mark> completely dark.",
+        errorType: "Subject-Verb Agreement",
+        note: "Singular subject \"the sky\" requires \"looks\"."
+      },
+      {
+        id: 29,
+        original: "They live at Nguyễn Trãi Street near the central market.",
+        correctedHtml: "They live <mark class='correction'>on</mark> Nguyễn Trãi Street near the central market.",
+        errorType: "Preposition of Address",
+        note: "Use \"on\" for street names when no specific building number is given."
+      },
+      {
+        id: 30,
+        original: "Last night, Duc eated two big plates of broken rice with egg.",
+        correctedHtml: "Last night, Duc <mark class='correction'>ate</mark> two big plates of broken rice with egg.",
+        errorType: "Irregular Past Tense",
+        note: "\"Eat\" is an irregular verb; the past simple form is \"ate\"."
+      },
+      {
+        id: 31,
+        original: "These running shoes are expensiver than the pair at the local shop.",
+        correctedHtml: "These running shoes are <mark class='correction'>more expensive</mark> than the pair at the local shop.",
+        errorType: "Comparative Adjective",
+        note: "Three-syllable adjectives require \"more\": \"more expensive\"."
+      },
+      {
+        id: 32,
+        original: "My younger cousin keeps five pet fishs in a round glass tank.",
+        correctedHtml: "My younger cousin keeps five pet <mark class='correction'>fish</mark> in a round glass tank.",
+        errorType: "Irregular Plural",
+        note: "The plural form of \"fish\" is usually \"fish\"."
+      },
+      {
+        id: 33,
+        original: "Can you please pass I that bottle of cold mineral water?",
+        correctedHtml: "Can you please pass <mark class='correction'>me</mark> that bottle of cold mineral water?",
+        errorType: "Object Pronoun",
+        note: "Verbs take object pronouns: use \"me\", not \"I\"."
+      },
+      {
+        id: 34,
+        original: "Our math teacher don't give us any homework on Friday afternoons.",
+        correctedHtml: "Our math teacher <mark class='correction'>doesn't</mark> give us any homework on Friday afternoons.",
+        errorType: "Subject-Verb Agreement",
+        note: "Third-person singular \"our math teacher\" takes \"doesn't\"."
+      },
+      {
+        id: 35,
+        original: "The tourist group arrived at Ho Chi Minh City late on Saturday night.",
+        correctedHtml: "The tourist group arrived <mark class='correction'>in</mark> Ho Chi Minh City late on Saturday night.",
+        errorType: "Preposition of Place",
+        note: "Use \"arrive in\" for cities and countries; \"arrive at\" for specific buildings."
+      },
+      {
+        id: 36,
+        original: "My sneakers are soaking wet because it is rain outside.",
+        correctedHtml: "My sneakers are soaking wet because it is <mark class='correction'>raining</mark> outside.",
+        errorType: "Present Continuous",
+        note: "Continuous tense requires \"is raining\" (-ing form)."
+      },
+      {
+        id: 37,
+        original: "He wants to buy an new carbon badminton racket this weekend.",
+        correctedHtml: "He wants to buy <mark class='correction'>a</mark> new carbon badminton racket this weekend.",
+        errorType: "Indefinite Article",
+        note: "Use \"a\" before consonant sounds (/n/ in \"new\")."
+      },
+      {
+        id: 38,
+        original: "Minh is really interested on learning how to fix electric scooters.",
+        correctedHtml: "Minh is really interested <mark class='correction'>in</mark> learning how to fix electric scooters.",
+        errorType: "Preposition Collocation",
+        note: "The correct preposition pair is \"interested in\"."
+      },
+      {
+        id: 39,
+        original: "They didn't saw the warning sign near the flooded road section.",
+        correctedHtml: "They didn't <mark class='correction'>see</mark> the warning sign near the flooded road section.",
+        errorType: "Auxiliary Verb + Base Form",
+        note: "After \"didn't\", use the bare infinitive verb \"see\"."
+      },
+      {
+        id: 40,
+        original: "Those little stray puppies is sleeping peacefully in the shade.",
+        correctedHtml: "Those little stray puppies <mark class='correction'>are</mark> sleeping peacefully in the shade.",
+        errorType: "Subject-Verb Agreement",
+        note: "Plural subject \"puppies\" requires plural verb \"are\"."
+      },
+      {
+        id: 41,
+        original: "You shouldn't eating too many sour mangoes before your match.",
+        correctedHtml: "You shouldn't <mark class='correction'>eat</mark> too many sour mangoes before your match.",
+        errorType: "Modal Verb",
+        note: "Modal verb \"shouldn't\" takes a bare infinitive: \"eat\"."
+      },
+      {
+        id: 42,
+        original: "My older brother is already taller that our uncle.",
+        correctedHtml: "My older brother is already taller <mark class='correction'>than</mark> our uncle.",
+        errorType: "Comparative Conjunction",
+        note: "Use \"than\" (not \"that\") in comparative statements."
+      },
+      {
+        id: 43,
+        original: "How often brothers do you have living in your house?",
+        correctedHtml: "How <mark class='correction'>many</mark> brothers do you have living in your house?",
+        errorType: "Question Word",
+        note: "Use \"How many\" to ask about countable quantities of people."
+      },
+      {
+        id: 44,
+        original: "We sat on low red stools and ordered two glass of iced green tea.",
+        correctedHtml: "We sat on low red stools and ordered two <mark class='correction'>glasses</mark> of iced green tea.",
+        errorType: "Plural Noun",
+        note: "Countable container noun requires plural \"glasses\" after \"two\"."
+      },
+      {
+        id: 45,
+        original: "The morning flag ceremony starts in 7:00 AM sharp every Monday.",
+        correctedHtml: "The morning flag ceremony starts <mark class='correction'>at</mark> 7:00 AM sharp every Monday.",
+        errorType: "Preposition of Time",
+        note: "Use \"at\" for specific clock times."
+      },
+      {
+        id: 46,
+        original: "Quan ran very fastly down the stairs to catch the green public bus.",
+        correctedHtml: "Quan ran very <mark class='correction'>fast</mark> down the stairs to catch the green public bus.",
+        errorType: "Irregular Adverb",
+        note: "\"Fast\" is both adjective and adverb; \"fastly\" does not exist in English."
+      },
+      {
+        id: 47,
+        original: "During Lunar New Year, children receive lucky money from they relatives.",
+        correctedHtml: "During Lunar New Year, children receive lucky money from <mark class='correction'>their</mark> relatives.",
+        errorType: "Possessive Adjective",
+        note: "Use possessive determiner \"their\" before the noun \"relatives\"."
+      },
+      {
+        id: 48,
+        original: "Look! The traffic warden directs vehicles through the junction right now.",
+        correctedHtml: "Look! The traffic warden <mark class='correction'>is directing</mark> vehicles through the junction right now.",
+        errorType: "Present Continuous",
+        note: "\"Look!\" and \"right now\" show the action is in progress: \"is directing\"."
+      }
+    ];
+
+    // State Variables
+    let deck = [...rawSentences];
+    let currentIndex = 0;
+    let isFlipped = false;
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    // DOM Elements
+    const cardContainer = document.getElementById('cardContainer');
+    const flashcardInner = document.getElementById('flashcardInner');
+    const sentenceText = document.getElementById('sentenceText');
+    const correctedText = document.getElementById('correctedText');
+    const errorTypeBadge = document.getElementById('errorTypeBadge');
+    const explanationText = document.getElementById('explanationText');
+    const counterBadge = document.getElementById('counterBadge');
+    const frontCardNum = document.getElementById('frontCardNum');
+    const progressBar = document.getElementById('progressBar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const flipBtn = document.getElementById('flipBtn');
+    const flipBtnLabel = document.getElementById('flipBtnLabel');
+    const jumpSelect = document.getElementById('jumpSelect');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const fontSizeSlider = document.getElementById('fontSizeSlider');
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const sunIcon = document.getElementById('sunIcon');
+    const moonIcon = document.getElementById('moonIcon');
+
+    // Populate Quick Jump Dropdown
+    function initJumpSelect() {
+      jumpSelect.innerHTML = '';
+      deck.forEach((item, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = `#${item.id} - ${item.errorType}`;
+        jumpSelect.appendChild(option);
+      });
+    }
+
+    // Render Current Card
+    function renderCard(animate = true) {
+      const item = deck[currentIndex];
+      
+      // Reset flip state when changing card
+      if (isFlipped) {
+        flashcardInner.classList.remove('flipped');
+        isFlipped = false;
+        flipBtnLabel.textContent = "Reveal";
+      }
+
+      // Update text & values
+      sentenceText.textContent = item.original;
+      
+      // Format corrected markup for back face
+      const formattedHtml = item.correctedHtml.replace(
+        /<mark class='correction'>(.*?)<\/mark>/g,
+        '<span class="text-emerald-700 dark:text-emerald-300 font-bold underline decoration-emerald-500 decoration-4 underline-offset-4 bg-emerald-100/70 dark:bg-emerald-950/80 px-1.5 py-0.5 rounded-lg">$1</span>'
+      );
+      correctedText.innerHTML = formattedHtml;
+      errorTypeBadge.textContent = item.errorType;
+      explanationText.textContent = item.note;
+
+      // Update counters & headers
+      counterBadge.textContent = `${currentIndex + 1} / ${deck.length}`;
+      frontCardNum.textContent = `Card #${item.id}`;
+      
+      const progressPercent = ((currentIndex + 1) / deck.length) * 100;
+      progressBar.style.width = `${progressPercent}%`;
+      jumpSelect.value = currentIndex;
+
+      // Navigation button states
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === deck.length - 1;
+
+      // Animate entry slightly if requested
+      if (animate) {
+        cardContainer.classList.remove('opacity-0');
+      }
+    }
+
+    // Flip Card Action
+    function toggleFlip() {
+      isFlipped = !isFlipped;
+      if (isFlipped) {
+        flashcardInner.classList.add('flipped');
+        flipBtnLabel.textContent = "Show Error";
+      } else {
+        flashcardInner.classList.remove('flipped');
+        flipBtnLabel.textContent = "Reveal";
+      }
+    }
+
+    // Navigation Handlers
+    function goToNext() {
+      if (currentIndex < deck.length - 1) {
+        currentIndex++;
+        renderCard();
+      }
+    }
+
+    function goToPrev() {
+      if (currentIndex > 0) {
+        currentIndex--;
+        renderCard();
+      }
+    }
+
+    // Shuffle Functionality
+    function shuffleDeck() {
+      // Fisher-Yates shuffle
+      for (let i = deck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [deck[i], deck[j]] = [deck[j], deck[i]];
+      }
+      currentIndex = 0;
+      initJumpSelect();
+      renderCard();
+    }
+
+    // Font Size Slider Logic
+    function updateFontSize(sizePx) {
+      sentenceText.style.fontSize = `${sizePx}px`;
+      correctedText.style.fontSize = `${sizePx}px`;
+      localStorage.setItem('vn_grammar_font_size', sizePx);
+    }
+
+    fontSizeSlider.addEventListener('input', (e) => {
+      updateFontSize(e.target.value);
+    });
+
+    // Theme Toggle Logic
+    function applyTheme(isDark) {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        sunIcon.classList.remove('hidden');
+        moonIcon.classList.add('hidden');
+      } else {
+        document.documentElement.classList.remove('dark');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+      }
+      localStorage.setItem('vn_grammar_theme', isDark ? 'dark' : 'light');
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      const isCurrentlyDark = document.documentElement.classList.contains('dark');
+      applyTheme(!isCurrentlyDark);
+    });
+
+    // Event Listeners for UI
+    cardContainer.addEventListener('click', toggleFlip);
+    flipBtn.addEventListener('click', toggleFlip);
+    nextBtn.addEventListener('click', goToNext);
+    prevBtn.addEventListener('click', goToPrev);
+    shuffleBtn.addEventListener('click', shuffleDeck);
+    
+    jumpSelect.addEventListener('change', (e) => {
+      currentIndex = parseInt(e.target.value, 10);
+      renderCard();
+    });
+
+    // Keyboard Navigation
+    window.addEventListener('keydown', (e) => {
+      // Ignore if dropdown is active
+      if (document.activeElement === jumpSelect) return;
+
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        toggleFlip();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        goToNext();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToPrev();
+      } else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        toggleFlip();
+      }
+    });
+
+    // Mobile Swipe Gesture Support
+    cardContainer.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    cardContainer.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+      const swipeDistance = touchEndX - touchStartX;
+      if (Math.abs(swipeDistance) > 48) {
+        if (swipeDistance < 0) {
+          // Swipe Left -> Next
+          goToNext();
+        } else {
+          // Swipe Right -> Prev
+          goToPrev();
+        }
+      }
+    }
+
+    // Initialize App & Restore Preferences
+    window.onload = function() {
+      // 1. Restore Theme
+      const savedTheme = localStorage.getItem('vn_grammar_theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        applyTheme(true);
+      } else {
+        applyTheme(false);
+      }
+
+      // 2. Restore Font Size
+      const savedFontSize = localStorage.getItem('vn_grammar_font_size');
+      if (savedFontSize) {
+        fontSizeSlider.value = savedFontSize;
+        updateFontSize(savedFontSize);
+      } else {
+        // Sensible default based on viewport
+        const defaultSize = window.innerWidth < 640 ? 26 : 34;
+        fontSizeSlider.value = defaultSize;
+        updateFontSize(defaultSize);
+      }
+
+      // 3. Render Initial Card
+      initJumpSelect();
+      renderCard();
+    };
+  </script>
+</body>
+</html>
